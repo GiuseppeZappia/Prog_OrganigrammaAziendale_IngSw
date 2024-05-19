@@ -1,10 +1,14 @@
 package Composite;
 
+import Exceptions.FiglioNonPresenteInQuestaUnitaException;
 import Exceptions.FiglioUnitaNonValidoException;
+import Exceptions.SubjectSenzaListenerInAscoltoException;
 import Mediator.ChangeManagerMediator;
 import Observer.CambiamentoUnitaListener;
 
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 
 public class UnitaOrganizzativa extends AbstractCompositeElementOrganigramma{
     private String nome;
@@ -15,22 +19,22 @@ public class UnitaOrganizzativa extends AbstractCompositeElementOrganigramma{
         this.mediatore = mediatore;
     }
 
+    @Override
     public String getNome() {
         return nome;
     }
 
     @Override//protected perche è factory???
-    protected ChangeManagerMediator creaMediatore() {
+    protected ChangeManagerMediator getMediatore() {
         return this.mediatore;
     }
 
     @Override
-    public boolean addChild(OrganigrammaElement element) throws FiglioUnitaNonValidoException {
+    public boolean addChild(OrganigrammaElement element) throws FiglioUnitaNonValidoException, SubjectSenzaListenerInAscoltoException {
         if(!(element instanceof SottoUnitaOrganizzativa)){
             throw new FiglioUnitaNonValidoException();
         }
         boolean inserimento=super.addChild(element);
-        super.notifyAddedChild(this,element);
         return inserimento;
     }
 
@@ -45,16 +49,42 @@ public class UnitaOrganizzativa extends AbstractCompositeElementOrganigramma{
     }
 
     @Override
-    public boolean removeChild(OrganigrammaElement daEliminare) {
-        Iterator<OrganigrammaElement> it= this.iterator();
-        while(it.hasNext()){
-            OrganigrammaElement elem= it.next();
-            if(elem.equals(daEliminare)){
-                it.remove();
-                super.notifyRemovedChild(this,elem);
-                return true;
-            }
+    public boolean removeChild(OrganigrammaElement daEliminare) throws FiglioNonPresenteInQuestaUnitaException, SubjectSenzaListenerInAscoltoException {
+        if(! this.elements.contains(daEliminare)){
+            throw new FiglioNonPresenteInQuestaUnitaException();
         }
-        return false;
+        return super.removeChild(daEliminare);//cosi se arrivo qui quello è un mio figlio e lo elimino nella abstract
     }
+
+    protected void rimuoviFigli() throws FiglioNonPresenteInQuestaUnitaException, SubjectSenzaListenerInAscoltoException {
+        Collection<OrganigrammaElement> figli=this.getChild();//NON USO THIS.ELEMENTS OPPURE POTREI AVERE LA CONCURRENT MODIFICATION EXCEPTION VISTO CHE PERCORRO LISTA MENTRE CI ELIMINO SU
+        for(OrganigrammaElement s:figli){
+            SottoUnitaOrganizzativa figlio=(SottoUnitaOrganizzativa)s;
+            removeChild(figlio);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UnitaOrganizzativa that = (UnitaOrganizzativa) o;
+        return Objects.equals(nome, that.nome) &&
+                Objects.equals(mediatore, that.mediatore);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nome, mediatore);
+    }
+
+    @Override
+    public String toString() {
+        return "UnitaOrganizzativa{" +
+                "nome='" + nome + '\'' +
+                ", mediatore=" + mediatore +
+                '}';
+    }
+
+
 }

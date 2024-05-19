@@ -4,6 +4,9 @@ package Composite;
 import Mediator.ChangeManagerMediator;
 import Observer.CambiamentoUnitaListener;
 
+import java.util.Collection;
+import java.util.Objects;
+
 public class SottoUnitaOrganizzativa extends AbstractCompositeElementOrganigramma {
     private String nome;
     private ChangeManagerMediator mediator;
@@ -13,8 +16,9 @@ public class SottoUnitaOrganizzativa extends AbstractCompositeElementOrganigramm
         this.mediator = mediator;
     }
 
+
     @Override
-    protected ChangeManagerMediator creaMediatore() {
+    protected ChangeManagerMediator getMediatore() {
         return this.mediator;
     }
 
@@ -34,10 +38,19 @@ public class SottoUnitaOrganizzativa extends AbstractCompositeElementOrganigramm
     }
 
     @Override
-    public OrganigrammaElement getChild(int index) {
+    public Collection<OrganigrammaElement> getChild() {
         throw new UnsupportedOperationException("LA SEGUENTE UNITA NON PREVEDE LA PRESENZA DI FIGLI");
     }
 
+    @Override
+    public Collection<String> stampaFigli(){
+       // throw new UnsupportedOperationException("LA SEGUENTE UNITA NON PREVEDE LA PRESENZA DI FIGLI");
+        System.out.println("LA SEGUENTE UNITA NON PREVEDE LA PRESENZA DI FIGLI");
+        return null;//poi togli ste due righe usate per debug
+    }
+
+
+    @Override
     public String getNome() {
         return nome;
     }
@@ -50,6 +63,28 @@ public class SottoUnitaOrganizzativa extends AbstractCompositeElementOrganigramm
     @Override
     public void removeListener(CambiamentoUnitaListener l) {
         super.removeListener(l);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SottoUnitaOrganizzativa that = (SottoUnitaOrganizzativa) o;
+        return Objects.equals(nome, that.nome) &&
+                Objects.equals(mediator, that.mediator);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nome, mediator);
+    }
+
+    @Override
+    public String toString() {
+        return "SottoUnitaOrganizzativa{" +
+                "nome='" + nome + '\'' +
+                ", mediator=" + mediator +
+                '}';
     }
 
 }

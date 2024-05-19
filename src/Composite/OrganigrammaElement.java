@@ -15,21 +15,20 @@ public interface OrganigrammaElement extends Iterable<OrganigrammaElement> {
     //MAGARI POTREI FARE SPECIFICARE UNITA E RUOLO QUANDO CREO DIPENDENTE E POI SE GLI VUOLE TOGLIERE RUOLO POTREI
     //FAR COMPARIRE FINESTRA PER SCELTA NUOVO RUOLO E CHIAMARE SETRUOLO IMPLEMENTATO COME SETTA+CHIAMAADDPERSONALE
     boolean addRuolo(Ruolo r) throws RuoloGiaPresenteNellUnitaException;
-    boolean removeRuolo(Ruolo r) throws RuoloNonPresenteNellUnitaException;
+    boolean removeRuolo(Ruolo r) throws RuoloNonPresenteNellUnitaException, SubjectSenzaListenerInAscoltoException;
     boolean addDipendenti(Dipendente d) throws DipendenteGiaEsistenteException;
     boolean removeDipendenti(Dipendente d) throws DipendenteNonPresenteNellUnitaException;
-    void addPersonale(Dipendente d, Ruolo r) throws DipendenteConRuoloGiaAssegnatoInTaleUnitaException;
     Collection<Ruolo> getRuoliDisponibili();
     Collection<Dipendente> getDipendenti();
     Map<Dipendente,Ruolo> getPersonale();
-    void notificaCambioRuolo(Ruolo r, LinkedList<Dipendente> dipendentiToChangeRole);
-    boolean removePersonale(Dipendente d) throws DipendenteNonPresenteNellUnitaException;
+    //void notificaCambioRuolo(Ruolo r, LinkedList<Dipendente> dipendentiToChangeRole);
     boolean changeRuoloToDipendente(Dipendente d) throws DipendenteNonPresenteNellUnitaException;
-    boolean addChild(OrganigrammaElement toAdd) throws FiglioUnitaNonValidoException;
-    boolean removeChild(OrganigrammaElement toRemove);
+    boolean addChild(OrganigrammaElement toAdd) throws FiglioUnitaNonValidoException, SubjectSenzaListenerInAscoltoException;
+    boolean removeChild(OrganigrammaElement toRemove) throws SubjectSenzaListenerInAscoltoException, FiglioNonPresenteInQuestaUnitaException;
     int getChildCount();
-    OrganigrammaElement getChild(int index);
-
+    Collection<OrganigrammaElement> getChild();
+    String getNome();
+    Collection<String> stampaFigli();
 
 
 }

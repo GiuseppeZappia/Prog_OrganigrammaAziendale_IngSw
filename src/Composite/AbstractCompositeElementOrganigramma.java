@@ -5,6 +5,7 @@ import Mediator.ChangeManagerMediator;
 import Utilities.Dipendente;
 import Utilities.Ruolo;
 import Observer.CambiamentoUnitaListener;
+
 import java.util.*;
 
 public abstract class AbstractCompositeElementOrganigramma implements OrganigrammaElement {
@@ -12,24 +13,31 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
     //MESSO PROTETTO PERCHE COSI METTO DALLE CLASSE FIGLIE THIS ANCHE QUA DENTRO E LO POSSO ELIMINARE, TIPO ORGANOGESTIONE
     //NEL COSTRUTTORE SI INSERISCE E SE VOLESSI ELIMINARLO POSSO FARLO, VA BENE?? LO INSERISCO SOLO PER ORGANOGESTIONE
     //VISTO CHE PER GLI ALTRI MI BASTA CHIAMARE RIMUOVI SU PADRE
-    protected ArrayList<OrganigrammaElement> elements=new ArrayList<>();
-    private ArrayList<Ruolo> ruoliDisponibili=new ArrayList<>();
-    private ArrayList<Dipendente> dipendentiUnita =new ArrayList<>();
-    private HashMap<Dipendente,Ruolo> personaleUnita=new HashMap<>();
-    private ArrayList<CambiamentoUnitaListener> listeners=new ArrayList<>();
-    private ChangeManagerMediator mediator=creaMediatore();
+    protected ArrayList<OrganigrammaElement> elements = new ArrayList<>();
+    private ArrayList<Ruolo> ruoliDisponibili = new ArrayList<>();
+    private ArrayList<Dipendente> dipendentiUnita = new ArrayList<>();
+    private HashMap<Dipendente, Ruolo> personaleUnita = new HashMap<>();
+    private ArrayList<CambiamentoUnitaListener> listeners = new ArrayList<>();
 
-
-    protected abstract ChangeManagerMediator creaMediatore(); //factoryMethod, lo lascio??????? posso passargli parametro, ha senso??
+    protected abstract ChangeManagerMediator getMediatore(); //factoryMethod????
+                                                             //lo lascio???????
+                                                             //NON DOVREBBE ESSERE FACTORY
 
     @Override
-    public boolean addChild(OrganigrammaElement element) throws FiglioUnitaNonValidoException {
-        return elements.add(element);
+    public abstract String getNome();
+
+    @Override
+    public boolean addChild(OrganigrammaElement element) throws FiglioUnitaNonValidoException, SubjectSenzaListenerInAscoltoException {
+        boolean ret=elements.add(element);
+        this.notifyAddedChild(this,element);
+        return ret;
     }
 
     @Override
-    public boolean removeChild(OrganigrammaElement element) {
-        return elements.remove(element);
+    public boolean removeChild(OrganigrammaElement element) throws SubjectSenzaListenerInAscoltoException, FiglioNonPresenteInQuestaUnitaException {
+        boolean ret=elements.remove(element);
+        this.notifyRemovedChild(this,element);
+        return ret;
     }
 
     @Override
@@ -38,41 +46,45 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
     }
 
     @Override
-    public OrganigrammaElement getChild(int index) {
-        return elements.get(index);
+    public Collection<OrganigrammaElement> getChild() {
+        return new ArrayList<>(elements);
     }
 
     @Override
-    public Collection<Ruolo> getRuoliDisponibili(){
+    public Collection<Ruolo> getRuoliDisponibili() {
         return new ArrayList<>(ruoliDisponibili);  //RESTITUSICO UNA COPIA, È NECESSARIO??
     }
 
     @Override
-    public Collection<Dipendente> getDipendenti(){
+    public Collection<Dipendente> getDipendenti() {
         return new ArrayList<>(dipendentiUnita); //ANCHE QUI UNA COPIA
     }
 
     @Override
-    public Map<Dipendente,Ruolo> getPersonale(){
+    public Map<Dipendente, Ruolo> getPersonale() {
         return new HashMap<>(personaleUnita);//ANCHE QUI UNA COPIA
     }
 
     @Override
     public boolean addRuolo(Ruolo r) throws RuoloGiaPresenteNellUnitaException {
-        if(ruoliDisponibili.contains(r)){
+        if (ruoliDisponibili.contains(r)) {
             throw new RuoloGiaPresenteNellUnitaException();
         }
         return ruoliDisponibili.add(r);
     }
 
     @Override
-    public boolean removeRuolo(Ruolo r) throws RuoloNonPresenteNellUnitaException {
-        if(!ruoliDisponibili.contains(r)){
+    public boolean removeRuolo(Ruolo r) throws RuoloNonPresenteNellUnitaException, SubjectSenzaListenerInAscoltoException {
+        if (!ruoliDisponibili.contains(r)) {
             throw new RuoloNonPresenteNellUnitaException();
         }
+        System.out.println("NELLA ASTRATTA: " + getMediatore() != null);
         //CASO IN CUI HO UN SOLO RUOLO E LO STO ELIMINANDO, COME CAMBIANO DIPENDENTI?
         //NE AGGIUNGO UNO IO E ASSEGNO QUELLO? OPPURE CHIEDO DI DEFINIRNE UNO NUOVO?
-        //OPPURE NON MI INTERESSA PERCHE IO QUANDO CREO DIPENDENTE DEVO PASSARE AL COSTRUTTORE ANCHE IL RUOLO, E FINCHE NON LO FACCIO NON
+        //OPPURE POSSO FARE IF CHE SE STAI ELIMINANDO UNICO RUOLO PRESENTE  E CI SONO DIPENDENTI CON QUELLO
+        // TI DA MESSAGGIO DOVE DICE PRIMA DI INSERIRE UN ALTRO RUOLO SENNO DIPEND RIMARREBERO SENZA
+
+        // IO QUANDO CREO DIPENDENTE DEVO PASSARE AL COSTRUTTORE ANCHE IL RUOLO, E FINCHE NON LO FACCIO NON
         //PUO ESSERE INSERITO, QUINDI SE NON HO RUOLI NON PUO NEMMENO INSERIRE DIPENDENTE, DEVE VENIRE A CREARE RUOLO (QUESTO MAGARI LO POSSO
         //SCRIVERE NELLA SEZIONE DEL TEMPLATE ASSUNZIONI TIPO
         // if(ruoliDisponibili.size()==1){}
@@ -81,18 +93,17 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
         //MAGARI POSSO INSERIRE UN RUOLO TIPO "DA ASSEGNARE" DI BASE, COSI POI SI PUO FARE LA CAMBIA RUOLO SULL'UTENTE
         //OPPURE POTREI DOVER USARE IL COMMAND PER FARMI CAMBIARE RUOLO TIPO
         ruoliDisponibili.remove(r);
-        LinkedList<Dipendente> dipendentiToChangeRole=findDipendentiWithRuolo(r);
-        this.notificaCambioRuolo(r,dipendentiToChangeRole);
+        LinkedList<Dipendente> dipendentiToChangeRole = findDipendentiWithRuolo(r);
+        this.notifyRuoloChanged(r, dipendentiToChangeRole);
         //cosi l'interfaccia apre una finestra per ogni dipendente interessato, al massimo li passo da qui
         return true;
     }
 
-
     //trovo dipendenti con ruolo eliminato per farglielo cambiare
-    private LinkedList<Dipendente> findDipendentiWithRuolo(Ruolo r){
-        LinkedList<Dipendente> ret=new LinkedList<>();
-        for(Map.Entry<Dipendente,Ruolo> entry: personaleUnita.entrySet()){
-            if(entry.getValue().equals(r)){
+    private LinkedList<Dipendente> findDipendentiWithRuolo(Ruolo r) {
+        LinkedList<Dipendente> ret = new LinkedList<>();
+        for (Map.Entry<Dipendente, Ruolo> entry : personaleUnita.entrySet()) {
+            if (entry.getValue().equals(r)) {
                 ret.add(entry.getKey());
             }
         }
@@ -102,49 +113,37 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
 
     @Override
     public boolean addDipendenti(Dipendente d) throws DipendenteGiaEsistenteException {
-        if(dipendentiUnita.contains(d)){
+        if (dipendentiUnita.contains(d)) {
             throw new DipendenteGiaEsistenteException();
         }
         //CONTROLLO SE RUOLO È VALIDO OPPURE NO VISTO CHE LO FACCIO SCEGLIERE TRA QUELLI PRESENTI??
 
-        personaleUnita.put(d,d.getRuolo());//LO INSERISCO NEL PERSONALE
+        personaleUnita.put(d, d.getRuolo(this));//LO INSERISCO NEL PERSONALE
+        //d.aggiungiDipendenteAdUnita(this,d.getRuolo(this));//SETTO TRA LE UNITA A CUI DIPENDE AFFERISCE QUELLA DOVE LO STO INSERENDO
         return dipendentiUnita.add(d);//LO INSERISCO TRA I DIPENDENTI
     }
 
     @Override
     public boolean removeDipendenti(Dipendente d) throws DipendenteNonPresenteNellUnitaException {
-        if(!dipendentiUnita.contains(d)){
+        if (!dipendentiUnita.contains(d)) {
             throw new DipendenteNonPresenteNellUnitaException();
         }
         removePersonale(d);//ELIMINO DAL PERSONALE IL DIPENDENTE
+        d.rimuoviDipendenteDaUnita(this);
         return dipendentiUnita.remove(d);
     }
 
     //METTO PRIVATO SE USO SOLO IO
-    @Override
-    public void addPersonale(Dipendente d, Ruolo r) throws DipendenteConRuoloGiaAssegnatoInTaleUnitaException {
-        if(personaleUnita.containsKey(d)){//IN UNA UNITA ORGANIZZATIVA DIPENDENTE PUO AVERE UN SOLO RUOLO
+    private void addPersonale(Dipendente d, Ruolo r) throws DipendenteConRuoloGiaAssegnatoInTaleUnitaException {
+        if (personaleUnita.containsKey(d)) {//IN UNA UNITA ORGANIZZATIVA DIPENDENTE PUO AVERE UN SOLO RUOLO
             throw new DipendenteConRuoloGiaAssegnatoInTaleUnitaException();
         }
-        personaleUnita.put(d,r);
+        personaleUnita.put(d, r);
     }
-
-    //NON USO ADDPERSONALE PERCHE VOGLIO CHE QUESTO SIA CHIAMATO SOLO QUANDO SONO SICURO CHE ANCHE NELL'OGGETTO DIPENDENTE IL RUOLO
-    //SIA STATO CAMBIATO INOLTRE QUA DEVO CONTROLLARE CHE DIPENDENTE CI SIA GIA TRA IL PERSONALE SOPRA INVECE NO
-    @Override
-    public boolean changeRuoloToDipendente(Dipendente d) throws DipendenteNonPresenteNellUnitaException {
-        if(!dipendentiUnita.contains(d)){
-            throw new DipendenteNonPresenteNellUnitaException();
-        }
-        personaleUnita.put(d,d.getRuolo());//COSI LO AGGIORNO COL NUOVO RUOLO E SO CHE QUESTO METODO LO CHIAMO IO
-        return true;
-    }
-
 
     //METTO PRIVATO SE USO SOLO IO
-    @Override
-    public boolean removePersonale(Dipendente d) throws DipendenteNonPresenteNellUnitaException {
-        if(!personaleUnita.containsKey(d)){
+    private boolean removePersonale(Dipendente d) throws DipendenteNonPresenteNellUnitaException {
+        if (!personaleUnita.containsKey(d)) {
             throw new DipendenteNonPresenteNellUnitaException();
         }
         //QUA CONTROLLO SU RUOLO LO FACCIO PASSANDO COME PARAMETRO ANCHE RUOLO UTENTE?
@@ -155,36 +154,59 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
     }
 
 
+    //NON USO ADDPERSONALE PERCHE VOGLIO CHE QUESTO SIA CHIAMATO SOLO QUANDO SONO SICURO CHE ANCHE NELL'OGGETTO DIPENDENTE IL RUOLO
+    //SIA STATO CAMBIATO INOLTRE QUA DEVO CONTROLLARE CHE DIPENDENTE CI SIA GIA TRA IL PERSONALE SOPRA INVECE NO
+    @Override
+    public boolean changeRuoloToDipendente(Dipendente d) throws DipendenteNonPresenteNellUnitaException {
+        if (!dipendentiUnita.contains(d)) {
+            throw new DipendenteNonPresenteNellUnitaException();
+        }
+        personaleUnita.put(d, d.getRuolo(this));//COSI LO AGGIORNO COL NUOVO RUOLO E SO CHE QUESTO METODO LO CHIAMO IO
+        return true;
+    }
+
+
     //METODI DI AGGIUNTA LISTENERS E NOTIFY
-    public void notificaCambioRuolo(Ruolo r,LinkedList<Dipendente> dipendentiToChangeRole){
-        mediator.notifyRemovedRuolo(this,r,dipendentiToChangeRole); //MEDIATORE SI OCCUPA DI AVVISARE I LISTENER CHE PER QUESTO SUBJECT UN RUOLO È VARIATO
+    public void notifyRuoloChanged(Ruolo r, LinkedList<Dipendente> dipendentiToChangeRole) throws SubjectSenzaListenerInAscoltoException {
+        getMediatore().notifyRemovedRuolo(this,r,dipendentiToChangeRole); //MEDIATORE SI OCCUPA DI AVVISARE I LISTENER CHE PER QUESTO SUBJECT UN RUOLO È VARIATO
     }
 
 
-    public void notifyAddedChild(OrganigrammaElement padre, OrganigrammaElement figlio){
-        mediator.notifyAddedChild(padre,figlio);//MEDIATORE SI OCCUPA DI AVVISARE I LISTENER DI QUEL SUBJECT CHE FIGLIO È VARIATO
+    public void notifyAddedChild(OrganigrammaElement padre, OrganigrammaElement figlio) throws SubjectSenzaListenerInAscoltoException {
+        getMediatore().notifyAddedChild(padre, figlio);//MEDIATORE SI OCCUPA DI AVVISARE I LISTENER DI QUEL SUBJECT CHE FIGLIO È VARIATO
     }
 
-    public void addListener(CambiamentoUnitaListener l){
-        mediator.registerListenerForSubject(this,l);
+    public void addListener(CambiamentoUnitaListener l) {
+        getMediatore().registerListenerForSubject(this, l);
     }
 
-    public void removeListener(CambiamentoUnitaListener l){
-       mediator.unregisterListenerForSubject(this,l);
+    public void removeListener(CambiamentoUnitaListener l) {
+        getMediatore().unregisterListenerForSubject(this, l);
     }
 
-    public void notifyRemovedChild(OrganigrammaElement padre, OrganigrammaElement figlioEliminato){
-        mediator.notifyRemovedChild(this,figlioEliminato);
+    public void notifyRemovedChild(OrganigrammaElement padre, OrganigrammaElement figlioEliminato) throws SubjectSenzaListenerInAscoltoException {
+        getMediatore().notifyRemovedChild(this, figlioEliminato);
     }
 
     @Override
-    public Iterator<OrganigrammaElement> iterator(){
+    public Collection<String> stampaFigli(){
+        ArrayList<String> ret = new ArrayList<>();
+        Iterator<OrganigrammaElement> it=elements.iterator();
+        while(it.hasNext()){
+            OrganigrammaElement o=it.next();
+            ret.add(o.getNome());
+        }
+        return ret;
+    }
+
+    @Override
+    public Iterator<OrganigrammaElement> iterator() {
         return new MyIterator();
     }
 
-    private class MyIterator implements Iterator<OrganigrammaElement>{
-        Iterator<OrganigrammaElement> it=elements.iterator(); //METTO ITERATOR E NON LIST???
-        private OrganigrammaElement last=null;
+    private class MyIterator implements Iterator<OrganigrammaElement> {
+        Iterator<OrganigrammaElement> it = elements.iterator(); //METTO ITERATOR E NON LIST???
+        private OrganigrammaElement last = null;
 
         @Override
         public boolean hasNext() {
@@ -193,20 +215,18 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
 
         @Override
         public OrganigrammaElement next() {
-            last=it.next();
+            last = it.next();
             return last;
         }
 
         @Override
         public void remove() {
-            if(last==null){
+            if (last == null) {
                 throw new NoSuchElementException();
             }
             it.remove();
-            last=null;
+            last = null;
         }
-
-
 
 
     }
