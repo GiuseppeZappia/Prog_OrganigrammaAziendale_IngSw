@@ -1,6 +1,7 @@
 package Composite;
 
 import Exceptions.*;
+import Observer.CambiamentoUnitaListener;
 import Utilities.Dipendente;
 import Utilities.Ruolo;
 
@@ -29,6 +30,7 @@ public interface OrganigrammaElement extends Iterable<OrganigrammaElement> {
     Collection<OrganigrammaElement> getChild();
     String getNome();
     Collection<String> stampaFigli();
-
+    void addListener(CambiamentoUnitaListener c);
+    void removeListener(CambiamentoUnitaListener c);
 
 }

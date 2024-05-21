@@ -176,10 +176,12 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
         getMediatore().notifyAddedChild(padre, figlio);//MEDIATORE SI OCCUPA DI AVVISARE I LISTENER DI QUEL SUBJECT CHE FIGLIO È VARIATO
     }
 
+    @Override
     public void addListener(CambiamentoUnitaListener l) {
         getMediatore().registerListenerForSubject(this, l);
     }
 
+    @Override
     public void removeListener(CambiamentoUnitaListener l) {
         getMediatore().unregisterListenerForSubject(this, l);
     }

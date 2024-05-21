@@ -20,9 +20,12 @@ public class ConcreteChangheManagerMediator implements ChangeManagerMediator {
 
     @Override
     public void registerListenerForSubject(OrganigrammaElement subject, CambiamentoUnitaListener observer) {
-        if (!listenersForSubject.get(subject).contains(observer)) {
+        if (!listenersForSubject.containsKey(subject)){//SE NON C'È PROPRIO QUEL SUBJECT LO AGGIUNGO
+            listenersForSubject.put(subject,new LinkedList<>());
             listenersForSubject.get(subject).add(observer);
-
+        }
+        if(!listenersForSubject.get(subject).contains(observer)) { //SE C'È IL SUBJECT E NON HA QUEL LISTENER LO AGGIUNGO
+            listenersForSubject.get(subject).add(observer);
         }
     }
 
@@ -33,12 +36,12 @@ public class ConcreteChangheManagerMediator implements ChangeManagerMediator {
 
     @Override
     public void notifyAddedChild(OrganigrammaElement subject, OrganigrammaElement child) throws SubjectSenzaListenerInAscoltoException {
-//        if (!listenersForSubject.containsKey(subject)) {
-//            throw new SubjectSenzaListenerInAscoltoException();
-//        }
-//        for (CambiamentoUnitaListener listener : listenersForSubject.get(subject)) {
-//            listener.inseritoFiglio(subject, child);
-//        }
+        if (!listenersForSubject.containsKey(subject)) {
+            throw new SubjectSenzaListenerInAscoltoException();
+        }
+        for (CambiamentoUnitaListener listener : listenersForSubject.get(subject)) {
+            listener.inseritoFiglio(subject, child);
+        }
     }
 
 
@@ -54,12 +57,12 @@ public class ConcreteChangheManagerMediator implements ChangeManagerMediator {
 
     @Override
     public void notifyRemovedChild(OrganigrammaElement subject, OrganigrammaElement child) throws SubjectSenzaListenerInAscoltoException {
-//        if (!listenersForSubject.containsKey(subject)) {
-//            throw new SubjectSenzaListenerInAscoltoException();
-//        }
-//        for (CambiamentoUnitaListener listener : listenersForSubject.get(subject)) {
-//            listener.rimossoFiglio(subject, child);
-//        }
+        if (!listenersForSubject.containsKey(subject)) {
+            throw new SubjectSenzaListenerInAscoltoException();
+        }
+        for (CambiamentoUnitaListener listener : listenersForSubject.get(subject)) {
+            listener.rimossoFiglio(subject, child);
+        }
     }
 
 
