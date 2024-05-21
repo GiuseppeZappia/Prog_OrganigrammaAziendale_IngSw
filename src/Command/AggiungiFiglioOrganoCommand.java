@@ -11,12 +11,12 @@ import Mediator.ChangeManagerMediator;
 import javax.swing.*;
 import java.util.LinkedList;
 
-public class AggiungiFiglioCommand implements Command {
+public class AggiungiFiglioOrganoCommand implements Command {
 
     private PannelloDisegno pd;
     private ChangeManagerMediator mediator;
 
-    public AggiungiFiglioCommand(PannelloDisegno p, ChangeManagerMediator m) {
+    public AggiungiFiglioOrganoCommand(PannelloDisegno p, ChangeManagerMediator m) {
         this.pd=p;
         this.mediator=m;
     }
