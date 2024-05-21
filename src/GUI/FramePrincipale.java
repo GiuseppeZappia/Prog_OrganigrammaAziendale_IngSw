@@ -11,6 +11,8 @@ public class FramePrincipale extends JFrame {
     private PanelBottoni panelBottoni;//SEPARO IN QUESTO MODO I VARI COMPONENTI FAVORENDO RIUSABILITA ED EVOLVIBILITA'
 
 
+
+    //AGGIORNANRE LA COSA DELLO SCROLL+VEDERE COME FARE CON RAPPRESENTAZIONE ULTIMO LIVELLO FIGLI+ DOMANDA CICCIO SU COSA DEL GRAFICO CHE SI ESPANDE ANCORA DI PIU TIPO
     public FramePrincipale() {
             setTitle("Organigramma Maker");
             setSize(800,800);//dimens
