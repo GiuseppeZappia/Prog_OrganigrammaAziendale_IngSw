@@ -13,9 +13,11 @@ import Composite.OrganoGestione;
 
 public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener {
     private final LinkedList<OrganigrammaElement> unitaDisegnate = new LinkedList<>();
+    private int maxLarg,maxAlt=800;
 
     public PannelloDisegno() {
         setBackground(Color.WHITE);
+        this.setPreferredSize(new Dimension(2000, 2000));
         repaint();
     }
 
@@ -26,14 +28,24 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
     //ORGANO DI GESTIONE QUINDI DOPO CHE O RIMUOVO TUTTO O RIMUOVO SOLO LUI
 
     @Override
+    public Dimension preferredSize(){
+        return new Dimension(maxLarg,maxAlt);
+    }
+
+
+    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (!unitaDisegnate.isEmpty()) {
             Graphics2D g2 = (Graphics2D) g;
             OrganigrammaElement orgGest = unitaDisegnate.getFirst();//FAI IN MODO CHE AGGIUNGA SEMPRE PER PRIMO QUESTO OPPURE IMPL != QUI
-            disegnaTutto(g2, orgGest, 300, 60);
+            //CERCO PUNTO CENTRALE FINESTRA PER DISEGNARE RETTANGOLO
+            int rettX=(getWidth()-150)/2; //dove 150 è dim rett
+            disegnaTutto(g2, orgGest, rettX, 60);
         }
+        revalidate();//per fargli aggiornare dimensioni e garantire di aggiungere scrollBarr se serve
     }
+
 
     private void disegnaTutto(Graphics2D g,OrganigrammaElement orgGest,int x,int y){
             int rettLarg=150;
@@ -43,6 +55,8 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
             int textX = x + (rettLarg - metrics.stringWidth(orgGest.getNome())) / 2; //cosi trovo la x dove mettere testo, in pratica la sto centrando in base alla lunghezza nel rettangolo lasciando da ambo i lati stessa distanza con rettangolo
             int textY = y + ((rettAlt - metrics.getHeight()) / 2) + metrics.getAscent();
             g.drawString(orgGest.getNome(), textX, textY);
+            maxLarg=Math.max(maxLarg,x+rettLarg);
+            maxAlt=Math.max(maxAlt,y+rettAlt);
             if( !(orgGest instanceof SottoUnitaOrganizzativa) && !orgGest.getChild().isEmpty()) {//perche sottounita non hanno figli
                 int numFigli=orgGest.getChildCount();
                 int spazioTraRettangoli=rettLarg*2-60;//per la divisione dello spazio
@@ -51,7 +65,6 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
                 int i=0;
                 for(OrganigrammaElement unita : orgGest.getChild()) {//SO CHE AVRO SOLO UNITAGESTIONE
                     int childX=startX+i*spazioTraRettangoli;
-                    System.out.println("sono "+unita+" e disegno a x= "+childX);
                     int childY = y + rettAlt + 60;
                     //g.drawLine(x + rettLarg / 2, y + rettAlt, childX + rettLarg / 2, childY);
                     i++;

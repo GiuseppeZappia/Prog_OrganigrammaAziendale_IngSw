@@ -26,16 +26,7 @@ public class PanelBottoni extends JPanel {
 
         //LI INSERISCO COME LISTENER DI THIS COSI SO COSA FARE QUANDO VENGONO PREMUTI
         creaOrgano.addActionListener(e -> {//implemento metodo dell'interfaccia ActionListener che si chiama ActionPerformed
-                    String nomeOrganoGestione = JOptionPane.showInputDialog(pd, "Nome Organo Gestione:", "Creazione Organo Gestione", JOptionPane.QUESTION_MESSAGE);
-                    if (nomeOrganoGestione == null) {//SE PREME CANCELLA RESTITUISCO SENZA FARE NULLA
-                        return;
-                    }
-                    if (nomeOrganoGestione.trim().isEmpty()) {//SE PROVA AD INVIARE SENZA SCRIVERE NULLA DO ERRORE
-                        JOptionPane.showMessageDialog(pd, "Impossibile creare unità senza nome", "Errore nell'inserimento", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    OrganigrammaElement elem = new OrganoGestione(nomeOrganoGestione, mediator);
-                    cmdHandler.handleCommand(new DisegnaElementCommand(pd, elem));
+                    cmdHandler.handleCommand(new DisegnaElementCommand(pd,mediator));
                     creaOrgano.setEnabled(false);//DOPO AVER INSERITO UN ORGANO NON NE POSSO INSERIRE PIU' LO RIMETTO VISIBILE DOPO AVER CANCELLATO TUTTO PER CREARNE UNO NUOVO
                     //ALTERNATIVAMENTE METTO IF CHE SE C'È GIA GESTIONE NELLA LISTA LANCIA DIALOG ERRORE
                 }
