@@ -3,7 +3,6 @@ package Mediator;
 
 import Composite.AbstractCompositeElementOrganigramma;
 import Composite.OrganigrammaElement;
-import Composite.SottoUnitaOrganizzativa;
 import Exceptions.SubjectSenzaListenerInAscoltoException;
 import Observer.CambiamentoUnitaListener;
 import Utilities.Dipendente;

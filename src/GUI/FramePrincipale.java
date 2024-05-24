@@ -15,7 +15,8 @@ public class FramePrincipale extends JFrame {
     //AGGIORNANRE LA COSA DELLO SCROLL+VEDERE COME FARE CON RAPPRESENTAZIONE ULTIMO LIVELLO FIGLI+ DOMANDA CICCIO SU COSA DEL GRAFICO CHE SI ESPANDE ANCORA DI PIU TIPO
     public FramePrincipale() {
             setTitle("Organigramma Maker");
-            setSize(800,800);//dimens
+//            setExtendedState(JFrame.MAXIMIZED_BOTH);//dimens
+            setSize(800, 600);
             setLocationRelativeTo(null);//spawna al centro
             setLayout(new BorderLayout());//metto quel layout della doc carino
             pannelloDisegno=new PannelloDisegno();
@@ -25,6 +26,5 @@ public class FramePrincipale extends JFrame {
             add(new JScrollPane(panelBottoni),BorderLayout.SOUTH);//metto il layout con i bottoni in basso nel layout principale del mio frame DECORO anche questo cosi in caso puo fare scroll se diminuisce dimensioni per vedere tutti bottoni
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //chiusura del programma quando chiudo gui
             setVisible(true); //meglio lasciarla alla fine cosi non ho problemi con le altre info
-
     }
 }

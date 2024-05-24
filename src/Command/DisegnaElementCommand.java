@@ -12,30 +12,23 @@ public class DisegnaElementCommand implements Command {
     private final ChangeManagerMediator mediator;
     private OrganigrammaElement element;
 
-    public DisegnaElementCommand(PannelloDisegno p, ChangeManagerMediator mediator) {
+    public DisegnaElementCommand(PannelloDisegno p, ChangeManagerMediator mediator,OrganigrammaElement element) {
         this.pd = p;
         this.mediator=mediator;
+        this.element = element;
     }
 
     @Override
     public boolean disegna(){
-        String nomeOrganoGestione = JOptionPane.showInputDialog(pd, "Nome Organo Gestione:", "Creazione Organo Gestione", JOptionPane.QUESTION_MESSAGE);
-        if (nomeOrganoGestione == null) {//SE PREME CANCELLA RESTITUISCO SENZA FARE NULLA
-            return false;
-        }
-        if (nomeOrganoGestione.trim().isEmpty()) {//SE PROVA AD INVIARE SENZA SCRIVERE NULLA DO ERRORE
-            JOptionPane.showMessageDialog(pd, "Impossibile creare unità senza nome", "Errore nell'inserimento", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        OrganigrammaElement elem = new OrganoGestione(nomeOrganoGestione, mediator);
-        this.element=elem;
-        pd.aggiungiUnita(elem);
+        pd.aggiungiUnita(element);
         return true;
-    }
+    }//supporto agilmente undo e redo
+
 
     @Override
     public boolean rimuovi(){
-        pd.rimuoviUnita(element);
+        pd.rimossoFiglio(element);//qua a differenza chiamo rimosso figlio perche è quella che uso quando
+        //elimino organo di gestione, quindi non devo trovare un padre da cui eliminare questo elemento come con gli altri
         return true;
     }
 

@@ -86,6 +86,8 @@ public class OrganoGestione extends AbstractCompositeElementOrganigramma{
             unita.rimuoviFigli();
             this.removeChild(elem);
         }
+        super.removeChild(this);//cosi rimuovo anche organogestione, lo posso chiamare nonostante non sia presente nella lista
+                                        //element perche tanto la funzione della super classe avverte col mediatore i miei listener che sono staot eliminato
     }
 
     @Override

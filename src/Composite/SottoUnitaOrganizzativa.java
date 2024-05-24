@@ -1,6 +1,9 @@
 package Composite;
 
 
+import Exceptions.FiglioNonPresenteInQuestaUnitaException;
+import Exceptions.FiglioUnitaNonValidoException;
+import Exceptions.SubjectSenzaListenerInAscoltoException;
 import Mediator.ChangeManagerMediator;
 import Observer.CambiamentoUnitaListener;
 
@@ -23,32 +26,21 @@ public class SottoUnitaOrganizzativa extends AbstractCompositeElementOrganigramm
     }
 
     @Override
-    public boolean addChild(OrganigrammaElement element){
-        throw new UnsupportedOperationException("LA SEGUENTE UNITA NON PERMETTE L'AGGIUNTA DI FIGLI");
+    public boolean addChild(OrganigrammaElement element) throws FiglioUnitaNonValidoException, SubjectSenzaListenerInAscoltoException {
+        if(!(element instanceof SottoUnitaOrganizzativa)){
+            throw new FiglioUnitaNonValidoException();
+        }
+        boolean inserimento=super.addChild(element);
+        return inserimento;
     }
 
     @Override
-    public boolean removeChild(OrganigrammaElement element) {
-        throw new UnsupportedOperationException("LA SEGUENTE UNITA NON PREVEDE LA PRESENZA DI FIGLI");
+    public boolean removeChild(OrganigrammaElement daEliminare) throws FiglioNonPresenteInQuestaUnitaException, SubjectSenzaListenerInAscoltoException {
+        if(! this.elements.contains(daEliminare)){
+            throw new FiglioNonPresenteInQuestaUnitaException();
+        }
+        return super.removeChild(daEliminare);//cosi se arrivo qui quello è un mio figlio e lo elimino nella abstract
     }
-
-    @Override
-    public int getChildCount() {
-        throw new UnsupportedOperationException("LA SEGUENTE UNITA NON PREVEDE LA PRESENZA DI FIGLI");
-    }
-
-    @Override
-    public Collection<OrganigrammaElement> getChild() {
-        throw new UnsupportedOperationException("LA SEGUENTE UNITA NON PREVEDE LA PRESENZA DI FIGLI");
-    }
-
-    @Override
-    public Collection<String> stampaFigli(){
-       // throw new UnsupportedOperationException("LA SEGUENTE UNITA NON PREVEDE LA PRESENZA DI FIGLI");
-        System.out.println("LA SEGUENTE UNITA NON PREVEDE LA PRESENZA DI FIGLI");
-        return null;//poi togli ste due righe usate per debug
-    }
-
 
     @Override
     public String getNome() {

@@ -9,6 +9,8 @@ public class HistoryCommandHandler implements CommandHandler {
 
     private final LinkedList<Command> redoList = new LinkedList<>();
 
+
+
     public HistoryCommandHandler() {
 
         this(100);

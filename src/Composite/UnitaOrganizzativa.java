@@ -7,7 +7,6 @@ import Mediator.ChangeManagerMediator;
 import Observer.CambiamentoUnitaListener;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Objects;
 
 public class UnitaOrganizzativa extends AbstractCompositeElementOrganigramma{

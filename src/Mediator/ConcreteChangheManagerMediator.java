@@ -21,10 +21,12 @@ public class ConcreteChangheManagerMediator implements ChangeManagerMediator {
     @Override
     public void registerListenerForSubject(OrganigrammaElement subject, CambiamentoUnitaListener observer) {
         if (!listenersForSubject.containsKey(subject)){//SE NON C'È PROPRIO QUEL SUBJECT LO AGGIUNGO
+            System.out.println("sono stato aggiunto");
             listenersForSubject.put(subject,new LinkedList<>());
             listenersForSubject.get(subject).add(observer);
         }
-        if(!listenersForSubject.get(subject).contains(observer)) { //SE C'È IL SUBJECT E NON HA QUEL LISTENER LO AGGIUNGO
+        if(!listenersForSubject.get(subject).contains(observer)) {
+            //SE C'È IL SUBJECT E NON HA QUEL LISTENER LO AGGIUNGO
             listenersForSubject.get(subject).add(observer);
         }
     }
@@ -61,7 +63,7 @@ public class ConcreteChangheManagerMediator implements ChangeManagerMediator {
             throw new SubjectSenzaListenerInAscoltoException();
         }
         for (CambiamentoUnitaListener listener : listenersForSubject.get(subject)) {
-            listener.rimossoFiglio(subject, child);
+            listener.rimossoFiglio(child);
         }
     }
 
