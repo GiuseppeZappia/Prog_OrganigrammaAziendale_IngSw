@@ -61,19 +61,21 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
         FontMetrics metrics = g.getFontMetrics(g.getFont());//prendo caratteristiche del testo che inserisco sul panel
         int textX = x + (rettLarg - metrics.stringWidth(orgGest.getNome())) / 2; //cosi trovo la x dove mettere testo, in pratica la sto centrando in base alla lunghezza nel rettangolo lasciando da ambo i lati stessa distanza con rettangolo
         int textY = y + ((rettAlt - metrics.getHeight()) / 2) + metrics.getAscent();
+        
         g.drawString(orgGest.getNome(), textX, textY);
         maxLarg=Math.max(maxLarg,x+rettLarg);
         maxAlt=Math.max(maxAlt,y+rettAlt);
         //QUA HAI RIMOSSO CONTROLLO !(orgGest instanceof SottoUnitaOrganizzativa) &&
         //PER FARE PROVE ALBERO INFINITO
-        if(  !orgGest.getChild().isEmpty()) {//perche sottounita non hanno figli
+        if(!orgGest.getChild().isEmpty()) {
             int spazioOccupatoDaiFigli=calcolaSpazioOccupato(orgGest,rettLarg,spazioTraRettOri);
             int startX = x +(rettLarg-spazioOccupatoDaiFigli)/2;
             int centroX=x+rettLarg/2;
             int bottomY=y+rettAlt;
 
-            g.drawLine(centroX,bottomY,centroX,bottomY+spazioTraRettVer/2);
-            int lineaOrizzY=bottomY+spazioTraRettVer/2;
+            int lineaOrizzY=bottomY+spazioTraRettVer/2;//coordinta y della mia linea
+            g.drawLine(centroX,bottomY,centroX,lineaOrizzY); //linea dal mio rett attuale in giu
+
             int i=0;
             Point coordPrimoFiglio=null;
             Point coordultimoFiglio=null;
@@ -97,7 +99,7 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
                 if(i==0){
                     coordPrimoFiglio=new Point(childX+rettLarg/2,childY);
                 }
-                if(i== orgGest.getChildCount()-1){
+                if(i==orgGest.getChildCount()-1){
                     coordultimoFiglio=new Point(childX+rettLarg/2,childY);
                 }
                 i++;
@@ -105,6 +107,7 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
             if(coordPrimoFiglio!=null && coordultimoFiglio!=null) {
                g.drawLine(coordPrimoFiglio.x,lineaOrizzY,coordultimoFiglio.x,lineaOrizzY);
             }
+            g.drawLine(coordPrimoFiglio.x,lineaOrizzY,x+rettLarg/2,y+rettAlt+spazioTraRettVer/2);
         }
     }
 

@@ -15,24 +15,23 @@ import java.util.LinkedList;
 import Composite.OrganigrammaElement;
 import Composite.OrganoGestione;
 import Composite.UnitaOrganizzativa;
-import Composite.SottoUnitaOrganizzativa;
 
 public class PanelBottoni extends JPanel {
-    private final JButton creaOrgano, creaUnita, creaSottoUnita, salva,rimuoviUnità,undo,redo;
+    private final JButton creaOrgano,creaSottoUnita, salva,rimuoviUnità,undo,redo;
     private final HistoryCommandHandler cmdHandler = new HistoryCommandHandler();
     private final ChangeManagerMediator mediator = new ConcreteChangheManagerMediator();
 
     public PanelBottoni(PannelloDisegno pd) {
         setLayout(new FlowLayout(FlowLayout.LEFT));//layout che mette bottoni tutti belli in riga da sx
         creaOrgano = new JButton("Crea Organo Gestione");
-        creaUnita = new JButton("Aggiungi Unita");
+//        creaUnita = new JButton("Aggiungi Unita");
         creaSottoUnita = new JButton("Aggiungi Sottounità");
         salva = new JButton("Salva");
         rimuoviUnità=new JButton("Rimuovi unità");
         undo=new JButton("Undo");
         redo=new JButton("Redo");
         add(creaOrgano);
-        add(creaUnita);
+//        add(creaUnita);
         add(creaSottoUnita);
         add(salva);
         add(rimuoviUnità);
@@ -64,40 +63,44 @@ public class PanelBottoni extends JPanel {
         );
 
         //BOTTONE CREA UNITA'
-        creaUnita.addActionListener(e -> {
-            if (pd.getUnitaDisegnate().isEmpty()) {
-                JOptionPane.showMessageDialog(pd, "Impossibile creare unità senza aver inserito un organo gestione", "Operazione non valida", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            String nomeUnitaOrganizzativa = JOptionPane.showInputDialog(pd, "Nome Unità Organizzativa:", "Creazione Unità Organizzativa", JOptionPane.QUESTION_MESSAGE);
-            if (nomeUnitaOrganizzativa == null) {//SE PREME CANCELLA RESTITUISCO SENZA FARE NULLA
-                return;
-            }
-            if (nomeUnitaOrganizzativa.trim().isEmpty()) {//SE PROVA AD INVIARE SENZA SCRIVERE NULLA DO ERRORE
-                JOptionPane.showMessageDialog(pd, "Impossibile creare unità senza nome", "Errore nell'inserimento", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            if(trovaElemento(nomeUnitaOrganizzativa,pd)!=null){
-                JOptionPane.showMessageDialog(pd, "È già presente un'unità con questo nome", "Errore nell'inserimento", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            OrganigrammaElement unita=new UnitaOrganizzativa(nomeUnitaOrganizzativa,mediator);
-            OrganoGestione padre= (OrganoGestione) pd.getUnitaDisegnate().getFirst();//SONO SICURO CHE IL PRIMO ELEMENTO SIA ORGANO GESTIONE PERCHE NON CONSENTO ALTRO INSERIMENTO
-            unita.addListener(pd);//AGGIUNGO IL PANNELLO COME LISTENER COSI ASCOLTA QUANDO CI SONO MODIFICHE SU QUESTO OGGETTO COME RIMOZIONE FIGLI E OPERA DI CONSEGU
-            cmdHandler.handleCommand(new AggiungiFiglioOrganoCommand(mediator,unita,padre));
-
-
-        });
+//        creaUnita.addActionListener(e -> {
+//            if (pd.getUnitaDisegnate().isEmpty()) {
+//                JOptionPane.showMessageDialog(pd, "Impossibile creare unità senza aver inserito un organo gestione", "Operazione non valida", JOptionPane.ERROR_MESSAGE);
+//                return;
+//            }
+//            String nomeUnitaOrganizzativa = JOptionPane.showInputDialog(pd, "Nome Unità Organizzativa:", "Creazione Unità Organizzativa", JOptionPane.QUESTION_MESSAGE);
+//            if (nomeUnitaOrganizzativa == null) {//SE PREME CANCELLA RESTITUISCO SENZA FARE NULLA
+//                return;
+//            }
+//            if (nomeUnitaOrganizzativa.trim().isEmpty()) {//SE PROVA AD INVIARE SENZA SCRIVERE NULLA DO ERRORE
+//                JOptionPane.showMessageDialog(pd, "Impossibile creare unità senza nome", "Errore nell'inserimento", JOptionPane.ERROR_MESSAGE);
+//                return;
+//            }
+//            if(trovaElemento(nomeUnitaOrganizzativa,pd)!=null){
+//                JOptionPane.showMessageDialog(pd, "È già presente un'unità con questo nome", "Errore nell'inserimento", JOptionPane.ERROR_MESSAGE);
+//                return;
+//            }
+//            OrganigrammaElement unita=new UnitaOrganizzativa(nomeUnitaOrganizzativa,mediator);
+//            OrganoGestione padre= (OrganoGestione) pd.getUnitaDisegnate().getFirst();//SONO SICURO CHE IL PRIMO ELEMENTO SIA ORGANO GESTIONE PERCHE NON CONSENTO ALTRO INSERIMENTO
+//            unita.addListener(pd);//AGGIUNGO IL PANNELLO COME LISTENER COSI ASCOLTA QUANDO CI SONO MODIFICHE SU QUESTO OGGETTO COME RIMOZIONE FIGLI E OPERA DI CONSEGU
+//            cmdHandler.handleCommand(new AggiungiFiglioOrganoCommand(mediator,unita,padre));
+//
+//
+//        });
 
 
 
         creaSottoUnita.addActionListener(e -> {
+            if(pd.getUnitaDisegnate().isEmpty()){
+                JOptionPane.showMessageDialog(pd, "Impossibile creare unità senza aver inserito un organo gestione", "Operazione non valida", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             JDialog finestra=apriFinestraDialogoComplessaAggiuntaSottoUnita(pd);
             finestra.setVisible(true);
         });
 
         rimuoviUnità.addActionListener(e -> {
-//           cmdHandler.handleCommand(new RimuoviFiglioCommand(pd));
+           //cmdHandler.handleCommand(new RimuoviFiglioCommand(pd));
             JDialog finestra=apriFinestraDialogoComplessaRimozione(pd);
             finestra.setVisible(true);
         });
@@ -110,7 +113,7 @@ public class PanelBottoni extends JPanel {
         //DEVO PASSARE AL JDIALOG L'OWNER, LO RICAVO DAL MIO PANNELLO DI DISEGNO
         //FACCIO CAST SENZA INSTANCEOF PERCHE SONO SICURO CHE IL JPANEL IN QUESTIONE SIA QUELLO CHE HA COME PADRE IL FRAME
         Frame framePrincipale= (Frame) SwingUtilities.getWindowAncestor(pd);
-        JDialog finestra=new JDialog(framePrincipale,"Inserimento Sottounità",true);//mettendo true so che nel frattempo utente non puo usare resto dell'app ma in caso deve chiudere dialogo
+        JDialog finestra=new JDialog(framePrincipale,"Inserimento Unità",true);//mettendo true so che nel frattempo utente non puo usare resto dell'app ma in caso deve chiudere dialogo
         finestra.setLocationRelativeTo(null);//al centro
         JPanel pannello=new JPanel();
         GroupLayout layout = new GroupLayout(pannello);
@@ -118,7 +121,7 @@ public class PanelBottoni extends JPanel {
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
 
-        JLabel nomeSottounita=new JLabel("Nome Sottounità Organizzativa:");
+        JLabel nomeSottounita=new JLabel("Nome Unità Organizzativa:");
         JTextField campoNomeSottounita=new JTextField(20);
 
         JLabel sceltaPadre=new JLabel("Scegli il padre:");
@@ -126,16 +129,16 @@ public class PanelBottoni extends JPanel {
         int i=0;
         for(OrganigrammaElement elem:pd.getUnitaDisegnate()){
             //QUA DA QUESTA RIGA C'è DA RIM DX DI OR PERCHE MESSO SOLO PER FARE PROVE INFINITO
-            if(elem instanceof UnitaOrganizzativa || elem instanceof SottoUnitaOrganizzativa){//faccio comparire nella lista solo i possibili padri
+            //if(elem instanceof UnitaOrganizzativa || elem instanceof SottoUnitaOrganizzativa){//faccio comparire nella lista solo i possibili padri
                 nomiUnita[i]=elem.getNome();
                 i++;
-            }
+            //}
         }
         JComboBox<String> opzioni=new JComboBox<>(nomiUnita);
         JButton ok=new JButton("OK");
-        if(nomiUnita.length-1<=0){//TOLGO UNO PERCHE NON DEVO CONSIDERARE ORGANOGESTIONE TRA POSSIBILI PADRI
-            ok.setEnabled(false);//NON FACCIO PREMERE OK SE NON C'È ALMENO UN POSSIBILE PADRE
-        }
+//        if(nomiUnita.length-1<=0){//TOLGO UNO PERCHE NON DEVO CONSIDERARE ORGANOGESTIONE TRA POSSIBILI PADRI
+//            ok.setEnabled(false);//NON FACCIO PREMERE OK SE NON C'È ALMENO UN POSSIBILE PADRE
+//        }
         JButton cancel=new JButton("Cancella");
         ok.addActionListener(e -> {
             String nome=campoNomeSottounita.getText();
@@ -150,11 +153,11 @@ public class PanelBottoni extends JPanel {
                 JOptionPane.showMessageDialog(pd, "È già presente un'unità con questo nome", "Errore nell'inserimento", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            SottoUnitaOrganizzativa sottounita=new SottoUnitaOrganizzativa(nome,mediator);
-            sottounita.addListener(pd);
+            UnitaOrganizzativa unita=new UnitaOrganizzativa(nome,mediator);
+            unita.addListener(pd);
             String padreScelto= (String) opzioni.getSelectedItem();
             OrganigrammaElement padre=trovaElemento(padreScelto,pd);
-            cmdHandler.handleCommand(new AggiungiFiglioUnitaCommand(sottounita,padre));
+            cmdHandler.handleCommand(new AggiungiFiglioUnitaCommand(unita,padre));
             finestra.dispose();
         });
 

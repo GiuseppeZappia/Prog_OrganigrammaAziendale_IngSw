@@ -30,7 +30,7 @@ public class UnitaOrganizzativa extends AbstractCompositeElementOrganigramma{
 
     @Override
     public boolean addChild(OrganigrammaElement element) throws FiglioUnitaNonValidoException, SubjectSenzaListenerInAscoltoException {
-        if(!(element instanceof SottoUnitaOrganizzativa)){
+        if(!(element instanceof UnitaOrganizzativa)){
             throw new FiglioUnitaNonValidoException();
         }
         boolean inserimento=super.addChild(element);
@@ -58,7 +58,7 @@ public class UnitaOrganizzativa extends AbstractCompositeElementOrganigramma{
     protected void rimuoviFigli() throws FiglioNonPresenteInQuestaUnitaException, SubjectSenzaListenerInAscoltoException {
         Collection<OrganigrammaElement> figli=this.getChild();//NON USO THIS.ELEMENTS OPPURE POTREI AVERE LA CONCURRENT MODIFICATION EXCEPTION VISTO CHE PERCORRO LISTA MENTRE CI ELIMINO SU
         for(OrganigrammaElement s:figli){
-            SottoUnitaOrganizzativa figlio=(SottoUnitaOrganizzativa)s;
+            UnitaOrganizzativa figlio=(UnitaOrganizzativa)s;
             removeChild(figlio);
         }
     }
