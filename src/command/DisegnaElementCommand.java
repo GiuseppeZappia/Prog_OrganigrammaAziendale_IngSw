@@ -6,12 +6,10 @@ import mediator.ChangeManagerMediator;
 
 public class DisegnaElementCommand implements Command {
     private final PannelloDisegno pd;
-    private final ChangeManagerMediator mediator;
     private OrganigrammaElement element;
 
-    public DisegnaElementCommand(PannelloDisegno p, ChangeManagerMediator mediator,OrganigrammaElement element) {
+    public DisegnaElementCommand(PannelloDisegno p,OrganigrammaElement element) {
         this.pd = p;
-        this.mediator=mediator;
         this.element = element;
     }
 
@@ -28,6 +26,4 @@ public class DisegnaElementCommand implements Command {
         //elimino organo di gestione, quindi non devo trovare un padre da cui eliminare questo elemento come con gli altri
         return true;
     }
-
-
 }

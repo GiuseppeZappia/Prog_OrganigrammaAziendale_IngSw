@@ -65,9 +65,9 @@ public class Dipendente {
         return this.unitaDiCuiFaParte.get(unita);
     }
 
-    public void setRuolo(OrganigrammaElement unita, Ruolo ruolo){
+    private void setRuolo(OrganigrammaElement unita, Ruolo ruolo){
         if(unitaDiCuiFaParte.containsKey(unita) || !unita.getRuoliDisponibili().contains(ruolo)){
-            System.out.println("ERRORE UNITA O QUEL RUOLO NON È DISPONIBILE NELL'UNITA'");//fai eccezione dopo
+            return; //non lancio eccezione perche uso questo metodo anche per modifica ruoli, (vedere cambia ruolo sotto, e lì sicuramente passo una unita presente)
         }
         unitaDiCuiFaParte.put(unita,ruolo);//AGGIORNO RUOLO IN QUELLA UNITA DEL DIPENDENTE
     }
@@ -77,7 +77,7 @@ public class Dipendente {
     //MAGARI MEGLIO PASSARE SOLO LA STRINGA DEL NOME RUOLO E POI ASSEGNARGLIELO
     public boolean cambiaRuolo(Ruolo nuovo,OrganigrammaElement unita) throws DipendenteNonPresenteNellUnitaException {
         this.setRuolo(unita,nuovo);
-        return  unita.changeRuoloToDipendente(this);
+        return  unita.changeRuoloToDipendente(this,nuovo);
     }
 
     @Override

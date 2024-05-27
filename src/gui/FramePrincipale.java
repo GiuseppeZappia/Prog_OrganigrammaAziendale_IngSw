@@ -6,7 +6,7 @@ import java.awt.*;
 public class FramePrincipale extends JFrame {
     private PannelloDisegno pannelloDisegno;//SEPARO IN QUESTO MODO I VARI COMPONENTI FAVORENDO RIUSABILITA ED EVOLVIBILITA'
     private PanelBottoni panelBottoni;//SEPARO IN QUESTO MODO I VARI COMPONENTI FAVORENDO RIUSABILITA ED EVOLVIBILITA'
-
+    private JFileChooser fileChooser;
 
 
     //AGGIORNANRE LA COSA DELLO SCROLL+VEDERE COME FARE CON RAPPRESENTAZIONE ULTIMO LIVELLO FIGLI+ DOMANDA CICCIO SU COSA DEL GRAFICO CHE SI ESPANDE ANCORA DI PIU TIPO
@@ -16,6 +16,8 @@ public class FramePrincipale extends JFrame {
             setSize(800, 600);
             setLocationRelativeTo(null);//spawna al centro
             setLayout(new BorderLayout());//metto quel layout della doc carino
+            fileChooser = new JFileChooser();
+            setJMenuBar(new MenuAlto(fileChooser,this));
             pannelloDisegno=new PannelloDisegno();
             JScrollPane barreScorr=new JScrollPane(pannelloDisegno);
             add(barreScorr,BorderLayout.CENTER);//lo metto al centro cosi lì disegno organigramma, inoltre lo decoro con JScrollPane cosi ho barre laterali

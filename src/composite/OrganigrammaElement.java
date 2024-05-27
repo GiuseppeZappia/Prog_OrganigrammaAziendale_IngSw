@@ -22,7 +22,7 @@ public interface OrganigrammaElement extends Iterable<OrganigrammaElement> {
     Collection<Dipendente> getDipendenti();
     Map<Dipendente,Ruolo> getPersonale();
     //void notificaCambioRuolo(Ruolo r, LinkedList<Dipendente> dipendentiToChangeRole);
-    boolean changeRuoloToDipendente(Dipendente d) throws DipendenteNonPresenteNellUnitaException;
+    boolean changeRuoloToDipendente(Dipendente d,Ruolo nuovo) throws DipendenteNonPresenteNellUnitaException;
     boolean addChild(OrganigrammaElement toAdd) throws FiglioUnitaNonValidoException, SubjectSenzaListenerInAscoltoException;
     boolean removeChild(OrganigrammaElement toRemove) throws SubjectSenzaListenerInAscoltoException, FiglioNonPresenteInQuestaUnitaException;
     int getChildCount();

@@ -4,6 +4,7 @@ import exceptions.FiglioNonPresenteInQuestaUnitaException;
 import exceptions.FiglioUnitaNonValidoException;
 import exceptions.SubjectSenzaListenerInAscoltoException;
 import mediator.ChangeManagerMediator;
+import memento.OrganoGestioneMemento;
 import observer.CambiamentoUnitaListener;
 
 import java.util.*;
@@ -16,12 +17,6 @@ public class OrganoGestione extends AbstractCompositeElementOrganigramma{
     public OrganoGestione(String nome,ChangeManagerMediator mediatore) {
         this.nome = nome;
         this.mediatore = mediatore;
-        //QUANTO COMMENTATO SOTTO NON DOVREBBE SERVIRE, PERCHE NELLA GUI IO PREMO ELIMINA E QUEL BOTTONE CHIAMA LA FUNZIONE
-        //RIMUOVITUTTO CHE ELIMINA TUTTI I MIEI FIGLI RICORSIVAMENTE E POI DALLA CANVAS ELIMINA ME, O MEGLIO OGGETTO CHE MI
-        //RAPPRESENTA, NON DEVO TENERNE DUNQUE TRACCIA IN UNA LISTA
-
-        //this.elements.add(this); MI INSERISCO NELLA LISTA COSI SE MI VOGLIO ELIMINARE LO POSSO FARE CON UNA FUNZIONE
-                                //CHE MI BASTA INSERIRE DOVE ELIMINO SIA ME CHE I FIGLI E INVIOO TUTTO AL LISTENER
     }
 
     @Override//protected perche è factory???
@@ -87,6 +82,48 @@ public class OrganoGestione extends AbstractCompositeElementOrganigramma{
         }
         super.removeChild(this);//cosi rimuovo anche organogestione, lo posso chiamare nonostante non sia presente nella lista
                                         //element perche tanto la funzione della super classe avverte col mediatore i miei listener che sono staot eliminato
+    }
+
+
+    public OrganoGestioneMemento creaMemento(){
+        HashMap<OrganigrammaElement,LinkedList<OrganigrammaElement>>figliPresenti=new HashMap<>();
+        LinkedList<OrganigrammaElement> figliOrgano=new LinkedList<>();
+        for(OrganigrammaElement elem: this.elements){
+            figliOrgano.add(elem);//aggiungo unita
+            LinkedList<OrganigrammaElement> figliDeiFigli=new LinkedList<>();
+            figliDeiFigli.addAll(elem.getChild());//aggiunto tutte le sottunita di quella unita
+            figliPresenti.put(elem, figliDeiFigli);
+            trovaFigliUlteriori(elem.getChild(),figliPresenti);
+        }
+        figliPresenti.put(this,figliOrgano);
+        return new OrganoGestioneMemento(figliPresenti);
+    }
+
+
+    private void trovaFigliUlteriori(Collection<OrganigrammaElement> figli,HashMap<OrganigrammaElement,LinkedList<OrganigrammaElement>>figliPresenti) {
+        for(OrganigrammaElement elem: figli){
+            if(!elem.getChild().isEmpty()){
+                Collection<OrganigrammaElement> listaFigli=elem.getChild();
+                LinkedList<OrganigrammaElement> figliDeiFigli=new LinkedList<>();
+                figliDeiFigli.addAll(elem.getChild());
+                figliPresenti.put(elem,figliDeiFigli);
+                trovaFigliUlteriori(listaFigli,figliPresenti);
+            }
+        }
+    }
+
+    public void ripristinaDaMemento(OrganoGestioneMemento memento) {
+        HashMap<OrganigrammaElement,LinkedList<OrganigrammaElement>>figliPresenti=memento.getFigli();
+        for(Map.Entry entry: figliPresenti.entrySet()){
+            OrganigrammaElement padre=(OrganigrammaElement) entry.getKey();
+            LinkedList<OrganigrammaElement> figli=(LinkedList<OrganigrammaElement>) entry.getValue();
+            try{
+                for(OrganigrammaElement elem :figli)
+                    padre.addChild(elem);
+            } catch (FiglioUnitaNonValidoException | SubjectSenzaListenerInAscoltoException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @Override

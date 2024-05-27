@@ -6,35 +6,37 @@ import mediator.ConcreteChangheManagerMediator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 import composite.OrganigrammaElement;
 import composite.OrganoGestione;
 import composite.UnitaOrganizzativa;
 
 public class PanelBottoni extends JPanel {
-    private final JButton creaOrgano,creaSottoUnita, salva,rimuoviUnità,undo,redo;
+    private final JButton creaOrgano,creaSottoUnita,rimuoviUnità,undo,redo;
     private final HistoryCommandHandler cmdHandler = new HistoryCommandHandler();
     private final ChangeManagerMediator mediator = new ConcreteChangheManagerMediator();
 
     public PanelBottoni(PannelloDisegno pd) {
         setLayout(new FlowLayout(FlowLayout.LEFT));//layout che mette bottoni tutti belli in riga da sx
         creaOrgano = new JButton("Crea Organo Gestione");
+        creaOrgano.setMnemonic(KeyEvent.VK_C);
         creaSottoUnita = new JButton("Aggiungi Sottounità");
-        salva = new JButton("Salva");
+        creaSottoUnita.setMnemonic(KeyEvent.VK_A);
         rimuoviUnità=new JButton("Rimuovi unità");
+        rimuoviUnità.setMnemonic(KeyEvent.VK_R);
         undo=new JButton("Undo");
+        undo.setMnemonic(KeyEvent.VK_U);
         redo=new JButton("Redo");
+        redo.setMnemonic(KeyEvent.VK_E);
         add(creaOrgano);
         add(creaSottoUnita);
-        add(salva);
         add(rimuoviUnità);
         add(undo);
         add(redo);
 
         undo.addActionListener(e-> cmdHandler.undo());
-
         redo.addActionListener(e-> cmdHandler.redo());
-
 
         //LI INSERISCO COME LISTENER DI THIS COSI SO COSA FARE QUANDO VENGONO PREMUTI
         creaOrgano.addActionListener(e -> {//implemento metodo dell'interfaccia ActionListener che si chiama ActionPerformed
@@ -51,7 +53,8 @@ public class PanelBottoni extends JPanel {
                         return;
                     }
                     OrganigrammaElement elem = new OrganoGestione(nomeOrganoGestione, mediator);
-                    cmdHandler.handleCommand(new DisegnaElementCommand(pd,mediator,elem));
+                    elem.addListener(pd);
+                    cmdHandler.handleCommand(new DisegnaElementCommand(pd,elem));
         }
         );
 

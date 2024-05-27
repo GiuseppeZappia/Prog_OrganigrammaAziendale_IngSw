@@ -4,12 +4,8 @@ import java.util.LinkedList;
 
 public class HistoryCommandHandler implements CommandHandler {
     private final int maxHistoryLength;
-
     private final LinkedList<Command> history = new LinkedList<>();
-
     private final LinkedList<Command> redoList = new LinkedList<>();
-
-
 
     public HistoryCommandHandler() {
         this(100);

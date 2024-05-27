@@ -2,8 +2,6 @@ package gui;
 
 import command.*;
 import observer.CambiamentoUnitaListener;
-import composite.utilities.Dipendente;
-import composite.utilities.Ruolo;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -36,17 +34,18 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
         JMenuItem menuItem2=new JMenuItem("Rimuovi ruolo");
         JMenuItem menuItem3=new JMenuItem("Aggiungi dipendente");
         JMenuItem menuItem4=new JMenuItem("Rimuovi dipendente");
-        JMenuItem menuItem5=new JMenuItem("Lista dipendenti");
-        JMenuItem menuItem6=new JMenuItem("Lista ruoli");
-        JMenuItem menuItem7=new JMenuItem("Lista personale");
+        JMenuItem menuItem5=new JMenuItem("Cambia Ruolo Dipendente");
+        JMenuItem menuItem6=new JMenuItem("Lista dipendenti");
+        JMenuItem menuItem7=new JMenuItem("Lista ruoli");
+        JMenuItem menuItem8=new JMenuItem("Lista personale");
         menuItem1.addActionListener(e->cmdHandler.handleCommand(new AggiungiRuoloCommand(this,cliccato)));
-        menuItem2.addActionListener(e->cmdHandler.handleCommand(new RimuoviRuoloCommand(this,cliccato)));//TODO
+        menuItem2.addActionListener(e->cmdHandler.handleCommand(new RimuoviRuoloCommand(this,cliccato)));
         menuItem3.addActionListener(e-> cmdHandler.handleCommand(new AggiungiDipendenteCommand(this,cliccato)));
-        menuItem4.addActionListener(e-> cmdHandler.handleCommand(new RimuoviDipendenteCommand()));//TODO
-        menuItem5.addActionListener(e-> cmdHandler.handleCommand(new VisualizzaDipendentiCommand(this,cliccato)));
-        menuItem6.addActionListener(e->cmdHandler.handleCommand(new VisualizzaRuoliCommand(cliccato,this)));
-        menuItem7.addActionListener(e-> cmdHandler.handleCommand(new VisualizzaPersonaleCommand(this,cliccato)));
-
+        menuItem4.addActionListener(e-> cmdHandler.handleCommand(new RimuoviDipendenteCommand(this,cliccato)));
+        menuItem5.addActionListener(e-> cmdHandler.handleCommand(new CambiaRuoloUtente(this,cliccato)));
+        menuItem6.addActionListener(e-> cmdHandler.handleCommand(new VisualizzaDipendentiCommand(this,cliccato)));
+        menuItem7.addActionListener(e->cmdHandler.handleCommand(new VisualizzaRuoliCommand(cliccato,this)));
+        menuItem8.addActionListener(e-> cmdHandler.handleCommand(new VisualizzaPersonaleCommand(this,cliccato)));
         popupMenuClickMouse.add(menuItem1);
         popupMenuClickMouse.add(menuItem2);
         popupMenuClickMouse.add(menuItem3);
@@ -54,6 +53,7 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
         popupMenuClickMouse.add(menuItem5);
         popupMenuClickMouse.add(menuItem6);
         popupMenuClickMouse.add(menuItem7);
+        popupMenuClickMouse.add(menuItem8);
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -63,9 +63,7 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
                     cliccato=elementoCliccato;
                 }
             }
-
         });
-
     }
 
     private OrganigrammaElement trovaPuntoCliccato(int x,int y){
@@ -76,11 +74,9 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
                 if((x>=punto.x && y>=punto.y)&&(x<=punto.x+150 && y<=punto.y+50)){
                     ret=(OrganigrammaElement)entry.getKey();
                 }
-
         }
         return ret;
     }
-
 
     private void mostraPopupMenu(int x,int y){
         popupMenuClickMouse.show(this,x,y);
@@ -89,15 +85,11 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
     public LinkedList<OrganigrammaElement> getUnitaDisegnate() {
         return unitaDisegnate;
     }
-    //FAI IN MODO CHE BOTTONE AGGIUNGI ORGANO SI SPEGNE DOPO CHE È STATO CLICCATO LA PRIMA VOLTA E RIAPPARE QUANDO VIENE ELIMINATO
-    //ORGANO DI GESTIONE QUINDI DOPO CHE O RIMUOVO TUTTO O RIMUOVO SOLO LUI
 
     @Override
     public Dimension preferredSize(){
         return new Dimension(maxLarg,maxAlt);
     }
-
-
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -109,11 +101,9 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
             int rettX=(getWidth()-150)/2; //dove 150 è dim rett
             puntiOccupati.clear();
             disegnaTutto(g2, orgGest, rettX, 60);
-
         }
         revalidate();//per fargli aggiornare dimensioni e garantire di aggiungere scrollBar se serve
     }
-
 
     private void disegnaTutto(Graphics2D g,OrganigrammaElement orgGest,int x,int y){
         int rettLarg=150;
@@ -188,7 +178,6 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
         }
         return 0;
     }
-
 //    private int calcolaSpazioOccupato(OrganigrammaElement elem,int rettLarg, int spazio){
 //        //qua elimino per prova (elem instanceof SottoUnitaOrganizzativa)||
 //        //per albero infinito
@@ -235,11 +224,10 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
     }
 
 
+    //MAGARI NON CHIAMO QUESTO MA FACCIO CREATOoRGANOGESTIONE() NEL ORGANOGEST CHE
+    //CHIAMA MEDIATOR CREATOORGANO() CHE AGGIUNGO E CHE A SUA VOLTA FA QUESTO
     public void aggiungiUnita(OrganigrammaElement unita) {
         unitaDisegnate.add(unita);
-        unita.addListener(this);
         repaint();
     }
-
-
 }

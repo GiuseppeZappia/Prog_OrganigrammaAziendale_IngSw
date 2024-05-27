@@ -78,18 +78,6 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
         if (!ruoliDisponibili.contains(r)) {
             throw new RuoloNonPresenteNellUnitaException();
         }
-        //CASO IN CUI HO UN SOLO RUOLO E LO STO ELIMINANDO POSSO FARE IF CHE SE STAI ELIMINANDO UNICO RUOLO PRESENTE
-        // E CI SONO DIPENDENTI CON QUELLO TI DA MESSAGGIO DOVE DICE PRIMA DI INSERIRE UN ALTRO RUOLO SENNO DIPEND
-        // RIMARREBERO SENZA
-
-        // IO QUANDO CREO DIPENDENTE DEVO PASSARE AL COSTRUTTORE ANCHE IL RUOLO, E FINCHE NON LO FACCIO NON
-        //PUO ESSERE INSERITO, QUINDI SE NON HO RUOLI NON PUO NEMMENO INSERIRE DIPENDENTE, DEVE VENIRE A CREARE RUOLO (QUESTO MAGARI LO POSSO
-        //SCRIVERE NELLA SEZIONE DEL TEMPLATE ASSUNZIONI TIPO
-        // if(ruoliDisponibili.size()==1){}
-
-        //SE RIMUOVO UN RUOLO TUTTI I DIPENDENTI CHE HANNO QUEL RUOLO DEVONO ESSERE AGGIORNATI
-        //MAGARI POSSO INSERIRE UN RUOLO TIPO "DA ASSEGNARE" DI BASE, COSI POI SI PUO FARE LA CAMBIA RUOLO SULL'UTENTE
-        //OPPURE POTREI DOVER USARE IL COMMAND PER FARMI CAMBIARE RUOLO TIPO
         ruoliDisponibili.remove(r);
         LinkedList<Dipendente> dipendentiToChangeRole = findDipendentiWithRuolo(r);
         this.notifyRuoloChanged(r, dipendentiToChangeRole);
@@ -146,11 +134,11 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
     //NON USO ADDPERSONALE PERCHE VOGLIO CHE QUESTO SIA CHIAMATO SOLO QUANDO SONO SICURO CHE ANCHE NELL'OGGETTO DIPENDENTE IL RUOLO
     //SIA STATO CAMBIATO INOLTRE QUA DEVO CONTROLLARE CHE DIPENDENTE CI SIA GIA TRA IL PERSONALE SOPRA INVECE NO
     @Override
-    public boolean changeRuoloToDipendente(Dipendente d) throws DipendenteNonPresenteNellUnitaException {
+    public boolean changeRuoloToDipendente(Dipendente d,Ruolo nuovo) throws DipendenteNonPresenteNellUnitaException {
         if (!dipendentiUnita.contains(d)) {
             throw new DipendenteNonPresenteNellUnitaException();
         }
-        personaleUnita.put(d, d.getRuolo(this));//COSI LO AGGIORNO COL NUOVO RUOLO E SO CHE QUESTO METODO LO CHIAMO IO
+        personaleUnita.put(d, nuovo);//COSI LO AGGIORNO COL NUOVO RUOLO E SO CHE QUESTO METODO LO CHIAMO IO
         return true;
     }
 
