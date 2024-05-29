@@ -4,19 +4,31 @@ import exceptions.FiglioNonPresenteInQuestaUnitaException;
 import exceptions.FiglioUnitaNonValidoException;
 import exceptions.SubjectSenzaListenerInAscoltoException;
 import mediator.ChangeManagerMediator;
-import memento.OrganoGestioneMemento;
+import memento.PannelloDisegnoMemento;
 import observer.CambiamentoUnitaListener;
 
 import java.util.*;
 
 
-public class OrganoGestione extends AbstractCompositeElementOrganigramma{
+public class OrganoGestione extends AbstractCompositeElementOrganigramma {
     private String nome;
+    //EVENTUALMENTE TRANSIENT
     private ChangeManagerMediator mediatore;
 
     public OrganoGestione(String nome,ChangeManagerMediator mediatore) {
         this.nome = nome;
         this.mediatore = mediatore;
+    }
+
+    //AGGIUNTO PER MEMENTO PROVE UNDO
+    public OrganoGestione(OrganoGestione o) {
+        this.nome = o.getNome();
+        this.mediatore= o.getMediatore();
+        this.elements=new ArrayList<>(o.getElements());
+    }
+
+    public void stampaMiei(){
+        mediatore.stampa(this);
     }
 
     @Override//protected perche è factory???
@@ -39,18 +51,16 @@ public class OrganoGestione extends AbstractCompositeElementOrganigramma{
 
     @Override
     public boolean removeChild(OrganigrammaElement daEliminare) throws FiglioNonPresenteInQuestaUnitaException, SubjectSenzaListenerInAscoltoException {
-        if(!this.elements.contains(daEliminare)){
+        if(!this.getElements().contains(daEliminare)){
             throw new FiglioNonPresenteInQuestaUnitaException();
         }//SONO SICURO SIA UN FIGLIO
 
         //DEVO ADESSO ELIMINARE UNO ALLA VOLTA TUTTI I FIGLI DEL FIGLIO FINO ALLE FOGLIE DELL'ORGANIGRAMMA
-        Iterator<OrganigrammaElement> it= elements.iterator();
-        while(it.hasNext()) {
-            OrganigrammaElement elem = it.next();
+        for (OrganigrammaElement elem : getElements()) {
             if (elem.equals(daEliminare)) {//UNA VOLTA TROVATO QUELLO DA ELIIMINARE...
-
-                //SONO SICURO PER COSTRUZIONE DI AVERE SOLO UNITAORGANIZZATIVA IN QUESTA LISTA, GRAZIE AL PATTERN COMPOSITE
-                //CHE AVREBBE LANCIATO ECCEZIONE AL MOMEMNTO AGGIUNTA ALTRIMENTI
+//
+//                //SONO SICURO PER COSTRUZIONE DI AVERE SOLO UNITAORGANIZZATIVA IN QUESTA LISTA, GRAZIE AL PATTERN COMPOSITE
+//                //CHE AVREBBE LANCIATO ECCEZIONE AL MOMEMNTO AGGIUNTA ALTRIMENTI
                 ((UnitaOrganizzativa) elem).rimuoviFigli(); //QUESTO METODO NELLA CLASSE UNITAORGANIZZATIVA FA RIMOZIONE DEI SUOI FIGLI
             }
         }
@@ -84,47 +94,6 @@ public class OrganoGestione extends AbstractCompositeElementOrganigramma{
                                         //element perche tanto la funzione della super classe avverte col mediatore i miei listener che sono staot eliminato
     }
 
-
-    public OrganoGestioneMemento creaMemento(){
-        HashMap<OrganigrammaElement,LinkedList<OrganigrammaElement>>figliPresenti=new HashMap<>();
-        LinkedList<OrganigrammaElement> figliOrgano=new LinkedList<>();
-        for(OrganigrammaElement elem: this.elements){
-            figliOrgano.add(elem);//aggiungo unita
-            LinkedList<OrganigrammaElement> figliDeiFigli=new LinkedList<>();
-            figliDeiFigli.addAll(elem.getChild());//aggiunto tutte le sottunita di quella unita
-            figliPresenti.put(elem, figliDeiFigli);
-            trovaFigliUlteriori(elem.getChild(),figliPresenti);
-        }
-        figliPresenti.put(this,figliOrgano);
-        return new OrganoGestioneMemento(figliPresenti);
-    }
-
-
-    private void trovaFigliUlteriori(Collection<OrganigrammaElement> figli,HashMap<OrganigrammaElement,LinkedList<OrganigrammaElement>>figliPresenti) {
-        for(OrganigrammaElement elem: figli){
-            if(!elem.getChild().isEmpty()){
-                Collection<OrganigrammaElement> listaFigli=elem.getChild();
-                LinkedList<OrganigrammaElement> figliDeiFigli=new LinkedList<>();
-                figliDeiFigli.addAll(elem.getChild());
-                figliPresenti.put(elem,figliDeiFigli);
-                trovaFigliUlteriori(listaFigli,figliPresenti);
-            }
-        }
-    }
-
-    public void ripristinaDaMemento(OrganoGestioneMemento memento) {
-        HashMap<OrganigrammaElement,LinkedList<OrganigrammaElement>>figliPresenti=memento.getFigli();
-        for(Map.Entry entry: figliPresenti.entrySet()){
-            OrganigrammaElement padre=(OrganigrammaElement) entry.getKey();
-            LinkedList<OrganigrammaElement> figli=(LinkedList<OrganigrammaElement>) entry.getValue();
-            try{
-                for(OrganigrammaElement elem :figli)
-                    padre.addChild(elem);
-            } catch (FiglioUnitaNonValidoException | SubjectSenzaListenerInAscoltoException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
 
     @Override
     public boolean equals(Object o) {

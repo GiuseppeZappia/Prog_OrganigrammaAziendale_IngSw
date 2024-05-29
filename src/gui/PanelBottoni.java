@@ -1,6 +1,7 @@
 package gui;
 
 import command.*;
+import exceptions.SubjectSenzaListenerInAscoltoException;
 import mediator.ChangeManagerMediator;
 import mediator.ConcreteChangheManagerMediator;
 
@@ -63,12 +64,11 @@ public class PanelBottoni extends JPanel {
                 JOptionPane.showMessageDialog(pd, "Impossibile creare unità senza aver inserito un organo gestione", "Operazione non valida", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            JDialog finestra=apriFinestraDialogoComplessaAggiuntaSottoUnita(pd);
+            JDialog finestra=apriFinestraDialogoComplessaAggiuntaUnita(pd);
             finestra.setVisible(true);
         });
 
         rimuoviUnità.addActionListener(e -> {
-           //cmdHandler.handleCommand(new RimuoviFiglioCommand(pd));
             JDialog finestra=apriFinestraDialogoComplessaRimozione(pd);
             finestra.setVisible(true);
         });
@@ -77,7 +77,7 @@ public class PanelBottoni extends JPanel {
     }
 
 
-    private JDialog apriFinestraDialogoComplessaAggiuntaSottoUnita(PannelloDisegno pd){
+    private JDialog apriFinestraDialogoComplessaAggiuntaUnita(PannelloDisegno pd){
         //DEVO PASSARE AL JDIALOG L'OWNER, LO RICAVO DAL MIO PANNELLO DI DISEGNO
         //FACCIO CAST SENZA INSTANCEOF PERCHE SONO SICURO CHE IL JPANEL IN QUESTIONE SIA QUELLO CHE HA COME PADRE IL FRAME
         Frame framePrincipale= (Frame) SwingUtilities.getWindowAncestor(pd);

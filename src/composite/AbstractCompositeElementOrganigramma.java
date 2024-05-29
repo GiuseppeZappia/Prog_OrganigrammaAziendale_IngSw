@@ -17,11 +17,14 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
     private ArrayList<Ruolo> ruoliDisponibili = new ArrayList<>();
     private ArrayList<Dipendente> dipendentiUnita = new ArrayList<>();
     private HashMap<Dipendente, Ruolo> personaleUnita = new HashMap<>();
-    private ArrayList<CambiamentoUnitaListener> listeners = new ArrayList<>();
 
     protected abstract ChangeManagerMediator getMediatore(); //factoryMethod????
                                                              //lo lascio???????
                                                              //NON DOVREBBE ESSERE FACTORY
+
+    protected ArrayList<OrganigrammaElement> getElements() {
+        return elements;
+    }
 
     @Override
     public abstract String getNome();
@@ -80,7 +83,7 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
         }
         ruoliDisponibili.remove(r);
         LinkedList<Dipendente> dipendentiToChangeRole = findDipendentiWithRuolo(r);
-        this.notifyRuoloChanged(r, dipendentiToChangeRole);
+//        this.notifyRuoloChanged(r, dipendentiToChangeRole);
         //cosi l'interfaccia apre una finestra per ogni dipendente interessato, al massimo li passo da qui
         return true;
     }
@@ -98,7 +101,7 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
 
 
     @Override
-    public boolean addDipendenti(Dipendente d) throws DipendenteGiaEsistenteException {
+    public boolean addDipendente(Dipendente d) throws DipendenteGiaEsistenteException {
         if (dipendentiUnita.contains(d)) {
             throw new DipendenteGiaEsistenteException();
         }
@@ -108,7 +111,7 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
     }
 
     @Override
-    public boolean removeDipendenti(Dipendente d) throws DipendenteNonPresenteNellUnitaException {
+    public boolean removeDipendente(Dipendente d) throws DipendenteNonPresenteNellUnitaException {
         if (!dipendentiUnita.contains(d)) {
             throw new DipendenteNonPresenteNellUnitaException();
         }
@@ -142,11 +145,16 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
         return true;
     }
 
-
-    //METODI DI AGGIUNTA LISTENERS E NOTIFY
-    public void notifyRuoloChanged(Ruolo r, LinkedList<Dipendente> dipendentiToChangeRole) throws SubjectSenzaListenerInAscoltoException {
-        getMediatore().notifyRemovedRuolo(this,r,dipendentiToChangeRole); //MEDIATORE SI OCCUPA DI AVVISARE I LISTENER CHE PER QUESTO SUBJECT UN RUOLO È VARIATO
+    @Override
+    public void removeAllListeners() throws SubjectSenzaListenerInAscoltoException {
+        getMediatore().unregisterAll(this);
     }
+
+    //INUTILE PER COME HO IMPLLEMENTATO LO CHIAMAVO SOPRA NEL CHANGERUOLO MA ORA HO COMMENTATO CHIAMATA
+    //METODI DI AGGIUNTA LISTENERS E NOTIFY
+//    public void notifyRuoloChanged(Ruolo r, LinkedList<Dipendente> dipendentiToChangeRole) throws SubjectSenzaListenerInAscoltoException {
+//        getMediatore().notifyRemovedRuolo(this,r,dipendentiToChangeRole); //MEDIATORE SI OCCUPA DI AVVISARE I LISTENER CHE PER QUESTO SUBJECT UN RUOLO È VARIATO
+//    }
 
 
     public void notifyAddedChild(OrganigrammaElement padre, OrganigrammaElement figlio) throws SubjectSenzaListenerInAscoltoException {
@@ -179,35 +187,35 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
         return ret;
     }
 
-    @Override
-    public Iterator<OrganigrammaElement> iterator() {
-        return new MyIterator();
-    }
-
-    private class MyIterator implements Iterator<OrganigrammaElement> {
-        Iterator<OrganigrammaElement> it = elements.iterator(); //METTO ITERATOR E NON LIST???
-        private OrganigrammaElement last = null;
-
-        @Override
-        public boolean hasNext() {
-            return it.hasNext();
-        }
-
-        @Override
-        public OrganigrammaElement next() {
-            last = it.next();
-            return last;
-        }
-
-        @Override
-        public void remove() {
-            if (last == null) {
-                throw new NoSuchElementException();
-            }
-            it.remove();
-            last = null;
-        }
-
-
-    }
+//    @Override
+//    public Iterator<OrganigrammaElement> iterator() {
+//        return new MyIterator();
+//    }
+//
+//    private class MyIterator implements Iterator<OrganigrammaElement> {
+//        Iterator<OrganigrammaElement> it = elements.iterator(); //METTO ITERATOR E NON LIST???
+//        private OrganigrammaElement last = null;
+//
+//        @Override
+//        public boolean hasNext() {
+//            return it.hasNext();
+//        }
+//
+//        @Override
+//        public OrganigrammaElement next() {
+//            last = it.next();
+//            return last;
+//        }
+//
+//        @Override
+//        public void remove() {
+//            if (last == null) {
+//                throw new NoSuchElementException();
+//            }
+//            it.remove();
+//            last = null;
+//        }
+//
+//
+//    }
 }

@@ -6,6 +6,7 @@ import exceptions.SubjectSenzaListenerInAscoltoException;
 import mediator.ChangeManagerMediator;
 import observer.CambiamentoUnitaListener;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -17,6 +18,14 @@ public class UnitaOrganizzativa extends AbstractCompositeElementOrganigramma{
         this.nome = nome;
         this.mediatore = mediatore;
     }
+
+    //AGGIUNTO PER MEMENTO PROVE UNDO
+    public UnitaOrganizzativa(UnitaOrganizzativa u){
+        this.nome = u.getNome();
+        this.mediatore= u.getMediatore();
+        this.elements=new ArrayList<>(u.getElements());
+    }
+
 
     @Override
     public String getNome() {
@@ -49,13 +58,16 @@ public class UnitaOrganizzativa extends AbstractCompositeElementOrganigramma{
 
     @Override
     public boolean removeChild(OrganigrammaElement daEliminare) throws FiglioNonPresenteInQuestaUnitaException, SubjectSenzaListenerInAscoltoException {
-        if(! this.elements.contains(daEliminare)){
+        if(! this.getElements().contains(daEliminare)){
             throw new FiglioNonPresenteInQuestaUnitaException();
         }
         return super.removeChild(daEliminare);//cosi se arrivo qui quello è un mio figlio e lo elimino nella abstract
     }
 
     protected void rimuoviFigli() throws FiglioNonPresenteInQuestaUnitaException, SubjectSenzaListenerInAscoltoException {
+        if(this.getChild().isEmpty()){
+            return;
+        }
         Collection<OrganigrammaElement> figli=this.getChild();//NON USO THIS.ELEMENTS OPPURE POTREI AVERE LA CONCURRENT MODIFICATION EXCEPTION VISTO CHE PERCORRO LISTA MENTRE CI ELIMINO SU
         for(OrganigrammaElement s:figli){
             UnitaOrganizzativa figlio=(UnitaOrganizzativa)s;

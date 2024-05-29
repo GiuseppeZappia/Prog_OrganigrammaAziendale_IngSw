@@ -8,11 +8,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-public class VisualizzaDipendentiCommand implements Command{
+public class VisualizzaDipendentiUnitaCommand implements Command{
     private PannelloDisegno pd;
     private OrganigrammaElement elem;
 
-    public VisualizzaDipendentiCommand(PannelloDisegno pd, OrganigrammaElement elem){
+    public VisualizzaDipendentiUnitaCommand(PannelloDisegno pd, OrganigrammaElement elem){
         this.pd = pd;
         this.elem = elem;
     }

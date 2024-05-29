@@ -3,12 +3,13 @@ package composite.utilities;
 import composite.OrganigrammaElement;
 import exceptions.DipendenteNonPresenteNellUnitaException;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Objects;
 
 
-public class Dipendente {
+public class Dipendente implements Serializable {
     //HO COSCIENZA DEL RUOLO CHE IL DIPENDENTE RICOPRE NELLE VARIE UNITA DOVE SI TROVA,
     //STO FACENDO IN MODO CHE IN UNA SINGOLA UNITA IL DIPENDENTE POSSA RICOPRIRE UN SOLO RUOLO
     private HashMap<OrganigrammaElement,Ruolo> unitaDiCuiFaParte=new HashMap<>();

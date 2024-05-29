@@ -1,14 +1,17 @@
 package gui;
 
 import command.*;
+import composite.OrganoGestione;
+import composite.UnitaOrganizzativa;
+import exceptions.FiglioUnitaNonValidoException;
+import exceptions.SubjectSenzaListenerInAscoltoException;
+import memento.PannelloDisegnoMemento;
 import observer.CambiamentoUnitaListener;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 import composite.OrganigrammaElement;
 
@@ -16,57 +19,44 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
     private final LinkedList<OrganigrammaElement> unitaDisegnate = new LinkedList<>();
     private final HashMap<OrganigrammaElement,Point> puntiOccupati=new HashMap<>();
     private int maxLarg,maxAlt=800;
-    private JPopupMenu popupMenuClickMouse;
-    private OrganigrammaElement cliccato=null;
+    private PopupMenuOperazioni popupMenuClickMouse;
     private CommandHandler cmdHandler=new HistoryCommandHandler();
 
     public PannelloDisegno() {
         setBackground(Color.WHITE);
         this.setPreferredSize(new Dimension(2000, 2000));
         repaint();
-        popupMenuClickMouse = new JPopupMenu();
-        inizializzaPopupMenu();
+        this.popupMenuClickMouse = new PopupMenuOperazioni(this,cmdHandler);
     }
 
-    private void inizializzaPopupMenu() {
-
-        JMenuItem menuItem1=new JMenuItem("Aggiungi ruolo");
-        JMenuItem menuItem2=new JMenuItem("Rimuovi ruolo");
-        JMenuItem menuItem3=new JMenuItem("Aggiungi dipendente");
-        JMenuItem menuItem4=new JMenuItem("Rimuovi dipendente");
-        JMenuItem menuItem5=new JMenuItem("Cambia Ruolo Dipendente");
-        JMenuItem menuItem6=new JMenuItem("Lista dipendenti");
-        JMenuItem menuItem7=new JMenuItem("Lista ruoli");
-        JMenuItem menuItem8=new JMenuItem("Lista personale");
-        menuItem1.addActionListener(e->cmdHandler.handleCommand(new AggiungiRuoloCommand(this,cliccato)));
-        menuItem2.addActionListener(e->cmdHandler.handleCommand(new RimuoviRuoloCommand(this,cliccato)));
-        menuItem3.addActionListener(e-> cmdHandler.handleCommand(new AggiungiDipendenteCommand(this,cliccato)));
-        menuItem4.addActionListener(e-> cmdHandler.handleCommand(new RimuoviDipendenteCommand(this,cliccato)));
-        menuItem5.addActionListener(e-> cmdHandler.handleCommand(new CambiaRuoloUtente(this,cliccato)));
-        menuItem6.addActionListener(e-> cmdHandler.handleCommand(new VisualizzaDipendentiCommand(this,cliccato)));
-        menuItem7.addActionListener(e->cmdHandler.handleCommand(new VisualizzaRuoliCommand(cliccato,this)));
-        menuItem8.addActionListener(e-> cmdHandler.handleCommand(new VisualizzaPersonaleCommand(this,cliccato)));
-        popupMenuClickMouse.add(menuItem1);
-        popupMenuClickMouse.add(menuItem2);
-        popupMenuClickMouse.add(menuItem3);
-        popupMenuClickMouse.add(menuItem4);
-        popupMenuClickMouse.add(menuItem5);
-        popupMenuClickMouse.add(menuItem6);
-        popupMenuClickMouse.add(menuItem7);
-        popupMenuClickMouse.add(menuItem8);
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                OrganigrammaElement elementoCliccato=trovaPuntoCliccato(e.getX(),e.getY());
-                if(e.getButton()==MouseEvent.BUTTON3 && elementoCliccato!=null){
-                    mostraPopupMenu(e.getX(),e.getY());
-                    cliccato=elementoCliccato;
-                }
+    public PannelloDisegnoMemento creaMemento(){
+        LinkedHashMap<OrganigrammaElement,LinkedList<OrganigrammaElement>> unitaConFigli=new LinkedHashMap<>();
+        for(OrganigrammaElement o:unitaDisegnate){
+            if(o instanceof OrganoGestione){
+                unitaConFigli.put(new OrganoGestione((OrganoGestione) o),new LinkedList<>(o.getChild()));
             }
-        });
+            else{
+                unitaConFigli.put(new UnitaOrganizzativa((UnitaOrganizzativa) o),new LinkedList<>(o.getChild()));
+            }
+        }
+        System.out.println(unitaConFigli);
+        return new PannelloDisegnoMemento(unitaConFigli);
     }
 
-    private OrganigrammaElement trovaPuntoCliccato(int x,int y){
+    public void ripristinaMementoPerCaricareDaFile(PannelloDisegnoMemento memento) {
+        unitaDisegnate.clear();
+        puntiOccupati.clear();
+        LinkedHashMap<OrganigrammaElement,LinkedList<OrganigrammaElement>>figliPresenti=memento.getFigli();
+        for(Map.Entry entry: figliPresenti.entrySet()){
+            OrganigrammaElement padre=(OrganigrammaElement) entry.getKey();
+            padre.addListener(this);
+            unitaDisegnate.add(padre);
+        }
+        repaint();
+    }
+
+    //visib package cosi lo accedo in popuèmenu
+    OrganigrammaElement trovaPuntoCliccato(int x, int y){
         OrganigrammaElement ret=null;
         for(Map.Entry entry:puntiOccupati.entrySet()){
                 Point punto=(Point)entry.getValue();
@@ -76,10 +66,6 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
                 }
         }
         return ret;
-    }
-
-    private void mostraPopupMenu(int x,int y){
-        popupMenuClickMouse.show(this,x,y);
     }
 
     public LinkedList<OrganigrammaElement> getUnitaDisegnate() {
@@ -112,7 +98,11 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
         int spazioTraRettVer=60;
         g.drawRect(x,y , rettLarg, rettAlt);
         puntiOccupati.put(orgGest,new Point(x, y));//aggiungo punto del rett disegnato
-        FontMetrics metrics = g.getFontMetrics(g.getFont());//prendo caratteristiche del testo che inserisco sul panel
+
+        Font font=g.getFont();
+        Font ridimensionato=fontRimpicciolito(g,orgGest.getNome(),rettLarg-10);
+        g.setFont(ridimensionato);
+        FontMetrics metrics = g.getFontMetrics(ridimensionato);//prendo caratteristiche del testo che inserisco sul panel
         int textX = x + (rettLarg - metrics.stringWidth(orgGest.getNome())) / 2; //cosi trovo la x dove mettere testo, in pratica la sto centrando in base alla lunghezza nel rettangolo lasciando da ambo i lati stessa distanza con rettangolo
         int textY = y + ((rettAlt - metrics.getHeight()) / 2) + metrics.getAscent();
 
@@ -164,9 +154,8 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
             }
 //            g.drawLine(coordPrimoFiglio.x,lineaOrizzY,x+rettLarg/2,y+rettAlt+spazioTraRettVer/2);//se ci fosse un solo figlio infatti i due if disegnerebbero un singolo punto cosi no, se invece ce ne sono di piu questo non ha effetto perche comunque disegnerebbe su una linea gia fatta
         }
+        g.setFont(font);//RIMETTO FONT ORIGINALE PER QUELLI DOPO SENNO DOPO CHE RIMPICCIOLISCO UNO ME LI RIMPICCIOLISCE TUTTI
     }
-
-
 
     //qua passare larghezza come parametro visto che per prova avevo messo valore, cosi se cambiera mai non devo andare a cercare tutto nel codice
     private int collisione(int childX,int childY){
@@ -178,6 +167,24 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
         }
         return 0;
     }
+
+    private Font fontRimpicciolito(Graphics g,String testo,int maxLarg){
+        Font originale=g.getFont();
+        FontMetrics metrics=g.getFontMetrics(originale);
+        int largTesto=metrics.stringWidth(testo);
+
+        while (largTesto>maxLarg) {
+            Font font=g.getFont();
+            float nuovaDim= font.getSize()-1;
+            if(nuovaDim<=0){break;}
+            Font nuovoFont=font.deriveFont(nuovaDim);
+            g.setFont(nuovoFont);
+            metrics=g.getFontMetrics(nuovoFont);
+            largTesto=metrics.stringWidth(testo);
+        }
+        return g.getFont();
+    }
+
 //    private int calcolaSpazioOccupato(OrganigrammaElement elem,int rettLarg, int spazio){
 //        //qua elimino per prova (elem instanceof SottoUnitaOrganizzativa)||
 //        //per albero infinito
@@ -204,13 +211,6 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
         return spazioOccupato-spazio;
     }
 
-//    @Override
-//    public void ruoloCambiato(Ruolo r, LinkedList<Dipendente> dipendenti) {
-//        for(Dipendente d:dipendenti){
-//            cmdHandler.handleCommand(new CambiaRuoloUtente(this,d,cliccato,r));
-//        }
-//    }
-
     @Override
     public void inseritoFiglio(OrganigrammaElement padre, OrganigrammaElement figlio) {
         unitaDisegnate.add(figlio);
@@ -222,7 +222,6 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
             unitaDisegnate.remove(figlio);
             this.repaint();
     }
-
 
     //MAGARI NON CHIAMO QUESTO MA FACCIO CREATOoRGANOGESTIONE() NEL ORGANOGEST CHE
     //CHIAMA MEDIATOR CREATOORGANO() CHE AGGIUNGO E CHE A SUA VOLTA FA QUESTO

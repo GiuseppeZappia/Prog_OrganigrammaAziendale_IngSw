@@ -83,7 +83,7 @@ public class AggiungiDipendenteDialogFactory implements CreateDialog {
             Dipendente dipendente = new Dipendente(nome, cognome, citta, indirizzo, eta.intValue());
             try {
                 dipendente.aggiungiDipendenteAdUnita(this.elem, ruolo);//LO AGGIUNGO ALL'UNITA E POI CON CHIAMATA SOTTO:
-                this.elem.addDipendenti(dipendente);//FACCIO IN MODO CHE QUELLA UNITA SE LO MEMORIZZI
+                this.elem.addDipendente(dipendente);//FACCIO IN MODO CHE QUELLA UNITA SE LO MEMORIZZI
             } catch (DipendenteGiaEsistenteException ex) {
                 JOptionPane.showMessageDialog(pd, "Dipendente già presente, sceglierlo tramite la funzione 'Sfoglia'", "Errore nell'inserimento", JOptionPane.ERROR_MESSAGE);
             }
@@ -183,7 +183,7 @@ public class AggiungiDipendenteDialogFactory implements CreateDialog {
             Ruolo ruolo = trovaRuolo(ruoloScelto);
             try {
                 dipendente.aggiungiDipendenteAdUnita(this.elem, ruolo);
-                elem.addDipendenti(dipendente);
+                elem.addDipendente(dipendente);
             } catch (DipendenteGiaEsistenteException ex) {
                 throw new RuntimeException(ex);//qua non ci va mai perche faccio scegliere solo dipendenti di altre unita
             }

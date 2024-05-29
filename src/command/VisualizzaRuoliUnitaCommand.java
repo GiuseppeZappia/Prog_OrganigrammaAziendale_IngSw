@@ -7,11 +7,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-public class VisualizzaRuoliCommand implements Command{
+public class VisualizzaRuoliUnitaCommand implements Command{
     private OrganigrammaElement elem;
     private PannelloDisegno pd;
 
-    public VisualizzaRuoliCommand(OrganigrammaElement elem,PannelloDisegno pd) {
+    public VisualizzaRuoliUnitaCommand(OrganigrammaElement elem, PannelloDisegno pd) {
         this.elem = elem;
         this.pd = pd;
     }

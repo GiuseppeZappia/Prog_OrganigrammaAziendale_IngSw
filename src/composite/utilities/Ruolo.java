@@ -1,8 +1,9 @@
 package composite.utilities;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Ruolo {
+public class Ruolo implements Serializable {
 
     private String nome,descrizione,requisiti;
     private Number stipendio;

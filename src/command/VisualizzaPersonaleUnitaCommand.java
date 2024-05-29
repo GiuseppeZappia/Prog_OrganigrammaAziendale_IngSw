@@ -9,11 +9,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
 
-public class VisualizzaPersonaleCommand implements Command {
+public class VisualizzaPersonaleUnitaCommand implements Command {
     private final OrganigrammaElement elem;
     private final PannelloDisegno pd;
 
-    public VisualizzaPersonaleCommand(PannelloDisegno pd, OrganigrammaElement elem) {
+    public VisualizzaPersonaleUnitaCommand(PannelloDisegno pd, OrganigrammaElement elem) {
         this.elem = elem;
         this.pd = pd;
     }

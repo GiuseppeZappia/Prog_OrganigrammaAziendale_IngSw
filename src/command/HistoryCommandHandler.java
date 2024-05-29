@@ -1,5 +1,6 @@
 package command;
 
+import java.io.IOException;
 import java.util.LinkedList;
 
 public class HistoryCommandHandler implements CommandHandler {
@@ -20,12 +21,16 @@ public class HistoryCommandHandler implements CommandHandler {
     @Override
     public void handleCommand(Command cmd) {//sta ricevendo un comando nuovo, i vecchi non mi fregano
 
-        if (cmd.doIt()) {
-            // restituisce true: può essere annullato
-            addToHistory(cmd);
-        } else {
-            // restituisce false: non può essere annullato quindi è come se non avessi piu storia
-            history.clear();
+        try {
+            if (cmd.doIt()) {
+                // restituisce true: può essere annullato
+                addToHistory(cmd);
+            } else {
+                // restituisce false: non può essere annullato quindi è come se non avessi piu storia
+                history.clear();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         if (!redoList.isEmpty())
             redoList.clear();
@@ -34,7 +39,11 @@ public class HistoryCommandHandler implements CommandHandler {
     public void redo() {
         if (redoList.size() > 0) {
             Command redoCmd = redoList.removeFirst();
-            redoCmd.doIt();
+            try {
+                redoCmd.doIt();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             history.addFirst(redoCmd);
 
         }

@@ -36,7 +36,7 @@ public class RimuoviDipendenteDialogFactory implements CreateDialog {
             String scelto = (String) opzioni.getSelectedItem();
             Dipendente dipendente = trovaDipendente(scelto);
             try {
-                this.elem.removeDipendenti(dipendente);
+                this.elem.removeDipendente(dipendente);
             } catch (DipendenteNonPresenteNellUnitaException ex) {
                 throw new RuntimeException(ex);
             }
