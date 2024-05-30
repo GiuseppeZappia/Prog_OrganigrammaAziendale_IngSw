@@ -14,7 +14,7 @@ import composite.OrganoGestione;
 import composite.UnitaOrganizzativa;
 
 public class PanelBottoni extends JPanel {
-    private final JButton creaOrgano,creaSottoUnita,rimuoviUnità,undo,redo;
+    private final JButton creaOrgano,creaSottoUnita,rimuoviUnità,undo,redo,info;
     private final HistoryCommandHandler cmdHandler = new HistoryCommandHandler();
     private final ChangeManagerMediator mediator = new ConcreteChangheManagerMediator();
 
@@ -22,7 +22,7 @@ public class PanelBottoni extends JPanel {
         setLayout(new FlowLayout(FlowLayout.LEFT));//layout che mette bottoni tutti belli in riga da sx
         creaOrgano = new JButton("Crea Organo Gestione");
         creaOrgano.setMnemonic(KeyEvent.VK_C);
-        creaSottoUnita = new JButton("Aggiungi Sottounità");
+        creaSottoUnita = new JButton("Aggiungi unità");
         creaSottoUnita.setMnemonic(KeyEvent.VK_A);
         rimuoviUnità=new JButton("Rimuovi unità");
         rimuoviUnità.setMnemonic(KeyEvent.VK_R);
@@ -30,14 +30,28 @@ public class PanelBottoni extends JPanel {
         undo.setMnemonic(KeyEvent.VK_U);
         redo=new JButton("Redo");
         redo.setMnemonic(KeyEvent.VK_E);
+        info=new JButton("Info");
         add(creaOrgano);
         add(creaSottoUnita);
         add(rimuoviUnità);
         add(undo);
         add(redo);
+        add(info);
 
         undo.addActionListener(e-> cmdHandler.undo());
         redo.addActionListener(e-> cmdHandler.redo());
+
+        info.addActionListener(e->{
+            JOptionPane.showMessageDialog(pd,"COME USARE L'APPLICAZIONE: "+"\n"+
+                    "-INSERIRE ORGANO DI GESTIONE FACENDO CLICK SU CREA ORGANO GESTIONE"+"\n"+
+                    "-INSERIRE EVENTUALI UNITA' SPECIFICANDONE IL PADRE CLICCANDO IL TASTO AGGIUNGI UNITA "+"\n"+
+                    "-CLICCA SU RIMUOVI UNITA' PER RIMUOVERE UNA UNITA E TUTTI I SUOI FIGLI"+"\n"+
+                    "-FARE CLICK COL TASTO DESTRO SULLE UNITA' PER OPERAZIONI AGGIUNTIVE"+"\n"+
+                    "-USARE UNDO E REDO PER ANNULLARE E RIFARE OPERAZIONI"+"\n"+
+                    "-SFRUTTARE LA BARRA DEI MENU PER OPERAZIONI AGGIUNTIVE E SPECIFICHE"+"\n"+
+                    "-USARE MNEMONICS (ALT+TASTO SOTTOLINEATO) PER SVOLGERE RAPIDAMENTE LE OPERAZIONI","Info Utilizzo Applicazione",JOptionPane.INFORMATION_MESSAGE);
+
+        });
 
         //LI INSERISCO COME LISTENER DI THIS COSI SO COSA FARE QUANDO VENGONO PREMUTI
         creaOrgano.addActionListener(e -> {//implemento metodo dell'interfaccia ActionListener che si chiama ActionPerformed
@@ -172,11 +186,11 @@ public class PanelBottoni extends JPanel {
             OrganigrammaElement daRimuovere=trovaElemento(scelto,pd);
             if(daRimuovere!=null){//perche nella scelta della listbox da spazio vuoto che non fa fare selezione ma se scelto da null
                 if(daRimuovere instanceof OrganoGestione){
-                    cmdHandler.handleCommand(new RimuoviTuttoCommand(pd,(OrganoGestione)daRimuovere));
+                    cmdHandler.handleCommand(new RimuoviFiglioCommand(null,daRimuovere,pd));//mettendo padre a null capisco di dover fare eliminazione totale
                 }
                 else{
                     OrganigrammaElement padre=trovaPadre(daRimuovere,pd);
-                    cmdHandler.handleCommand(new RimuoviFiglioCommand(padre,daRimuovere));
+                    cmdHandler.handleCommand(new RimuoviFiglioCommand(padre,daRimuovere,pd));
                 }
             }
             finestra.dispose();

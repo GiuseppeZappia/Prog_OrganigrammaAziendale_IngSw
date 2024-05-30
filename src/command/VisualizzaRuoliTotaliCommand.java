@@ -1,7 +1,6 @@
 package command;
 
 import composite.OrganigrammaElement;
-import composite.utilities.Dipendente;
 import composite.utilities.Ruolo;
 import gui.PannelloDisegno;
 
@@ -20,9 +19,9 @@ public class VisualizzaRuoliTotaliCommand implements Command {
     @Override
     public boolean doIt() {
         Frame framePrincipale= (Frame) SwingUtilities.getWindowAncestor(pd);
-        JDialog finestra=new JDialog(framePrincipale,"Elenco Dipendenti Azienda",true);//mettendo true so che nel frattempo utente non puo usare resto dell'app ma in caso deve chiudere dialogo
-        Collection<Ruolo> dipendentiElem=trovaRuoli();
-        String[] ruoliToStringArray=dipendentiElem.stream().map(Ruolo::toString).toArray(String[]::new);
+        JDialog finestra=new JDialog(framePrincipale,"Elenco Ruoli Azienda",true);//mettendo true so che nel frattempo utente non puo usare resto dell'app ma in caso deve chiudere dialogo
+        Collection<Ruolo> ruoliElem=trovaRuoli();
+        String[] ruoliToStringArray=ruoliElem.stream().map(Ruolo::toString).toArray(String[]::new);
         JList<String> listaRuoli=new JList<>(ruoliToStringArray);
         JScrollPane jScrollPane=new JScrollPane(listaRuoli);
         finestra.add(jScrollPane,BorderLayout.CENTER);
@@ -39,7 +38,11 @@ public class VisualizzaRuoliTotaliCommand implements Command {
     private Collection<Ruolo> trovaRuoli() {
         Collection<Ruolo> ret=new ArrayList<>();
         for(OrganigrammaElement elem:pd.getUnitaDisegnate()){
-            ret.addAll(elem.getRuoliDisponibili());
+            for(Ruolo ruolo: elem.getRuoliDisponibili()){
+            if(!ret.contains(ruolo)){
+                ret.add(ruolo);
+                }
+            }
         }
         return ret;
     }

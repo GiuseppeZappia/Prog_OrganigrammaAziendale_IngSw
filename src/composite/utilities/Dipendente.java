@@ -6,7 +6,6 @@ import exceptions.DipendenteNonPresenteNellUnitaException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Objects;
 
 
 public class Dipendente implements Serializable {
@@ -101,13 +100,12 @@ public class Dipendente implements Serializable {
 
     @Override
     public String toString() {
-        return "Dipendente{" +
+        return "Dipendente: " +
                 "nome='" + nome + '\'' +
                 ", cognome='" + cognome + '\'' +
                 ", citta='" + citta + '\'' +
                 ", indirizzo='" + indirizzo + '\'' +
-                ", eta=" + eta +
-                '}';
+                ", eta=" + eta;
     }
 
 }

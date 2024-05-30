@@ -134,7 +134,7 @@ public class AggiungiRuoloDialogFactory implements CreateDialog{
             try {
                 elem.addRuolo(ruolo);
             } catch (RuoloGiaPresenteNellUnitaException ex) {
-                throw new RuntimeException(ex);//non ci vado, i ruoli li faccio scegliere tra quelli delle altre unita
+                JOptionPane.showMessageDialog(pd, "Ruolo già presente", "Errore nell'inserimento", JOptionPane.ERROR_MESSAGE);
             }
             finestra.dispose();
         });
@@ -164,9 +164,9 @@ public class AggiungiRuoloDialogFactory implements CreateDialog{
     private String[] listaRuoliPresenti(){
         LinkedList<String> lista=new LinkedList<>();
         for(OrganigrammaElement elem: pd.getUnitaDisegnate()){
-            if(!elem.equals(this.elem)){//cosi non mostro tra ruoli possibili quelli che gia ci sno per questa unita
                 for(Ruolo r: elem.getRuoliDisponibili()){
-                    lista.add(r.getNome());
+                    if(!elem.equals(this.elem) && !lista.contains(r.getNome())){//cosi non mostro tra ruoli possibili quelli che gia ci sno per questa unita (potrebbe capitare infatti che la funzione sfoglia mi mostri un ruolo gia presente per la mia unita)
+                        lista.add(r.getNome());
                 }
             }}
         return lista.toArray(new String[lista.size()]);

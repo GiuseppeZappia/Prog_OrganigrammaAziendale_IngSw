@@ -133,6 +133,10 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
         return true;
     }
 
+    @Override
+    public void rimuoviFigliTutti(){
+        elements.clear();
+    }
 
     //NON USO ADDPERSONALE PERCHE VOGLIO CHE QUESTO SIA CHIAMATO SOLO QUANDO SONO SICURO CHE ANCHE NELL'OGGETTO DIPENDENTE IL RUOLO
     //SIA STATO CAMBIATO INOLTRE QUA DEVO CONTROLLARE CHE DIPENDENTE CI SIA GIA TRA IL PERSONALE SOPRA INVECE NO

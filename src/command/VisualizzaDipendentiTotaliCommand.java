@@ -39,7 +39,11 @@ public class VisualizzaDipendentiTotaliCommand implements Command{
     private Collection<Dipendente> trovaDipendenti() {
         Collection<Dipendente> ret=new ArrayList<>();
         for(OrganigrammaElement elem:pd.getUnitaDisegnate()){
-            ret.addAll(elem.getDipendenti());
+            for(Dipendente d: elem.getDipendenti()){
+                if(!ret.contains(d)){
+                    ret.add(d);
+                }
+            }
         }
         return ret;
     }

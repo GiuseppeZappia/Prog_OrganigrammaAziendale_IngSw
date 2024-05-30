@@ -33,6 +33,8 @@ public interface OrganigrammaElement extends Serializable {//extends Iterable<Or
     String getNome();
     //??????
     Collection<String> stampaFigli();
+    void rimuoviFigliTutti();
+
 
     void removeAllListeners() throws SubjectSenzaListenerInAscoltoException;
     void addListener(CambiamentoUnitaListener c);

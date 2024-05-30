@@ -19,14 +19,6 @@ public class UnitaOrganizzativa extends AbstractCompositeElementOrganigramma{
         this.mediatore = mediatore;
     }
 
-    //AGGIUNTO PER MEMENTO PROVE UNDO
-    public UnitaOrganizzativa(UnitaOrganizzativa u){
-        this.nome = u.getNome();
-        this.mediatore= u.getMediatore();
-        this.elements=new ArrayList<>(u.getElements());
-    }
-
-
     @Override
     public String getNome() {
         return nome;
@@ -41,6 +33,10 @@ public class UnitaOrganizzativa extends AbstractCompositeElementOrganigramma{
     public boolean addChild(OrganigrammaElement element) throws FiglioUnitaNonValidoException, SubjectSenzaListenerInAscoltoException {
         if(!(element instanceof UnitaOrganizzativa)){
             throw new FiglioUnitaNonValidoException();
+        }
+        //QUESTO IF AGGIUNTO EVENTUALMENTE PER MEMENTO
+        if(elements.contains(element)){
+            return false;
         }
         boolean inserimento=super.addChild(element);
         return inserimento;
@@ -61,6 +57,7 @@ public class UnitaOrganizzativa extends AbstractCompositeElementOrganigramma{
         if(! this.getElements().contains(daEliminare)){
             throw new FiglioNonPresenteInQuestaUnitaException();
         }
+
         return super.removeChild(daEliminare);//cosi se arrivo qui quello è un mio figlio e lo elimino nella abstract
     }
 
@@ -74,6 +71,10 @@ public class UnitaOrganizzativa extends AbstractCompositeElementOrganigramma{
             figlio.rimuoviFigli();
             removeChild(figlio);
         }
+    }
+
+    public void rimuoviTutti() throws FiglioNonPresenteInQuestaUnitaException, SubjectSenzaListenerInAscoltoException {
+        this.rimuoviFigli();
     }
 
     @Override
@@ -94,7 +95,6 @@ public class UnitaOrganizzativa extends AbstractCompositeElementOrganigramma{
     public String toString() {
         return "UnitaOrganizzativa{" +
                 "nome='" + nome + '\'' +
-                ", mediatore=" + mediatore +
                 '}';
     }
 

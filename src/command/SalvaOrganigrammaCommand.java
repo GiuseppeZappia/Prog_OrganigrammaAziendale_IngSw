@@ -1,9 +1,7 @@
 package command;
 
-import composite.OrganigrammaElement;
 import gui.PannelloDisegno;
 
-import javax.swing.*;
 import java.io.*;
 
 public class SalvaOrganigrammaCommand implements Command{

@@ -34,12 +34,11 @@ public class Ruolo implements Serializable {
 
     @Override
     public String toString() {
-        return "Ruolo{" +
+        return "Ruolo:" +
                 "nome='" + nome + '\'' + "\n" +
                 "descrizione='" + descrizione + '\'' + "\n" +
                 "requisiti='" + requisiti + '\'' + "\n" +
-                "stipendio=" + stipendio +
-                '}';
+                "stipendio=" + stipendio ;
     }
 
     public String getNome() {

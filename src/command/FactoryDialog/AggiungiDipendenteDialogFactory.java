@@ -185,7 +185,8 @@ public class AggiungiDipendenteDialogFactory implements CreateDialog {
                 dipendente.aggiungiDipendenteAdUnita(this.elem, ruolo);
                 elem.addDipendente(dipendente);
             } catch (DipendenteGiaEsistenteException ex) {
-                throw new RuntimeException(ex);//qua non ci va mai perche faccio scegliere solo dipendenti di altre unita
+                JOptionPane.showMessageDialog(pd, "Dipendente già presente", "Errore nell'inserimento", JOptionPane.ERROR_MESSAGE);
+
             }
             finestra.dispose();
         });
@@ -245,9 +246,12 @@ public class AggiungiDipendenteDialogFactory implements CreateDialog {
     private String[] listaDipendentiPresenti() {
         LinkedList<String> lista = new LinkedList<>();
         for (OrganigrammaElement elem : pd.getUnitaDisegnate()) {
-            if (!elem.equals(this.elem)) {//cosi non do possibilita di inserire in un ruolo un dipendente dello stesso
+            if (!elem.equals(this.elem) ) {//cosi non do possibilita di inserire in un ruolo un dipendente dello stesso
                 for (Dipendente d : elem.getDipendenti()) {
-                    lista.add(d.getNome() + "-" + d.getCognome() + "-" + d.getEta());
+                    String toAdd=d.getNome() + "-" + d.getCognome() + "-" + d.getEta();
+                    if(!lista.contains(toAdd)) {
+                    lista.add(toAdd);
+                    }
                 }
             }
         }

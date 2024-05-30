@@ -1,20 +1,22 @@
 package gui;
-
 import command.*;
-import composite.OrganigrammaElement;
-
 import javax.swing.*;
 import java.awt.event.KeyEvent;
-import java.io.*;
 
 public class MenuAlto extends JMenuBar{
-    private CommandHandler cmdHandler=new HistoryCommandHandler();;
+    private HistoryCommandHandler cmdHandler=new HistoryCommandHandler();;
 
     public MenuAlto(JFileChooser fileChooser,PannelloDisegno pd,JFrame frame){
         JMenu menuFile=new JMenu("File");
         menuFile.setMnemonic(KeyEvent.VK_F);//MNEMONIC COSI CON ALT+F UTENTE PUO APRIRE, MIGLIORE UX
         JMenuItem nuovo=new JMenuItem("Nuovo",new ImageIcon("./src/resources/icons8-aggiungi-file-15.png"));
         nuovo.setMnemonic(KeyEvent.VK_N);
+        nuovo.addActionListener(e->{
+            if(!pd.getUnitaDisegnate().isEmpty()){
+                new RimuoviFiglioCommand(null, pd.getUnitaDisegnate().getFirst(),pd).doIt();
+            }
+        });
+
         JMenuItem carica=new JMenuItem("Carica",new ImageIcon("./src/resources/icons8-caricare-12.png"));
 
         carica.addActionListener(e->{
@@ -49,12 +51,26 @@ public class MenuAlto extends JMenuBar{
             cmdHandler.handleCommand(new VisualizzaRuoliTotaliCommand(pd));
 
         });
+
+        JMenuItem visualPersonale=new JMenuItem("Visualizza personale");
+        visualPersonale.setMnemonic(KeyEvent.VK_P);
+        visualPersonale.addActionListener(e->{
+            cmdHandler.handleCommand(new VisualizzaPersonaleTotaleCommand(pd));
+        });
+
+
+
         visualizza.add(visualDipendenti);
         visualizza.add(visualizzaTuttiRuoli);
+        visualizza.add(visualPersonale);
+
 
         add(menuFile);
         add(visualizza);
     }
+
+
+
 
 }
 

@@ -29,7 +29,8 @@ public class CaricaOrganigrammaCommand implements Command{
 //                array = (OrganigrammaElement[]) ois.readObject();
                 PannelloDisegnoMemento memento = (PannelloDisegnoMemento) ois.readObject();
 //                pd.getUnitaDisegnate().clear();
-                pd.ripristinaMementoPerCaricareDaFile(memento);
+//                pd.ripristinaMementoPerCaricareDaFile(memento);
+                    pd.ripristinaMemento(memento);
             } catch (ClassNotFoundException e) {
                 JOptionPane.showMessageDialog(pd,"IMPOSSIBILE SALVARE","Errore",JOptionPane.ERROR_MESSAGE);
             }

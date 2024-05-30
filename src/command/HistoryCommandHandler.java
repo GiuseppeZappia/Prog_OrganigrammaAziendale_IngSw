@@ -20,7 +20,6 @@ public class HistoryCommandHandler implements CommandHandler {
 
     @Override
     public void handleCommand(Command cmd) {//sta ricevendo un comando nuovo, i vecchi non mi fregano
-
         try {
             if (cmd.doIt()) {
                 // restituisce true: può essere annullato
@@ -37,7 +36,7 @@ public class HistoryCommandHandler implements CommandHandler {
     }
 
     public void redo() {
-        if (redoList.size() > 0) {
+        if (!redoList.isEmpty()) {
             Command redoCmd = redoList.removeFirst();
             try {
                 redoCmd.doIt();
@@ -50,7 +49,7 @@ public class HistoryCommandHandler implements CommandHandler {
     }
 
     public void undo() {
-        if (history.size() > 0) {
+        if (!history.isEmpty()) {
             Command undoCmd = history.removeFirst();
             undoCmd.undoIt();
             redoList.addFirst(undoCmd);
@@ -62,6 +61,5 @@ public class HistoryCommandHandler implements CommandHandler {
         if (history.size() > maxHistoryLength) {
             history.removeLast();
         }
-
     }
 }

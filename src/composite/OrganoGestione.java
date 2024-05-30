@@ -20,17 +20,6 @@ public class OrganoGestione extends AbstractCompositeElementOrganigramma {
         this.mediatore = mediatore;
     }
 
-    //AGGIUNTO PER MEMENTO PROVE UNDO
-    public OrganoGestione(OrganoGestione o) {
-        this.nome = o.getNome();
-        this.mediatore= o.getMediatore();
-        this.elements=new ArrayList<>(o.getElements());
-    }
-
-    public void stampaMiei(){
-        mediatore.stampa(this);
-    }
-
     @Override//protected perche è factory???
     protected ChangeManagerMediator getMediatore() {
         return this.mediatore;
@@ -45,6 +34,10 @@ public class OrganoGestione extends AbstractCompositeElementOrganigramma {
     public boolean addChild(OrganigrammaElement element) throws FiglioUnitaNonValidoException, SubjectSenzaListenerInAscoltoException {
         if(!(element instanceof UnitaOrganizzativa)){
             throw new FiglioUnitaNonValidoException();
+        }
+        //QUESTO IF AGGIUNTO EVENTUALMENTE PER MEMENTO
+        if(elements.contains(element)){
+            return false;
         }
         return super.addChild(element);
     }
