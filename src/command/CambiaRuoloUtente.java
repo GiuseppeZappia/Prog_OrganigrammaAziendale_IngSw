@@ -1,7 +1,7 @@
 package command;
 
-import command.FactoryDialog.CambiaRuoloUtenteDialogFactory;
-import command.FactoryDialog.CreateDialog;
+import command.CreationDialogImplementation.CambiaRuoloUtenteDialog;
+import command.CreationDialogImplementation.CreateDialog;
 import composite.OrganigrammaElement;
 import gui.PannelloDisegno;
 import javax.swing.*;
@@ -14,7 +14,7 @@ public class CambiaRuoloUtente implements Command{
     public CambiaRuoloUtente(PannelloDisegno pd, OrganigrammaElement elem) {
         this.pd = pd;
         this.elem = elem;
-        createDialog=new CambiaRuoloUtenteDialogFactory();
+        createDialog=new CambiaRuoloUtenteDialog();
     }
 
     @Override

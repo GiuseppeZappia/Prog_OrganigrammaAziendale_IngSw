@@ -6,6 +6,7 @@ import exceptions.DipendenteNonPresenteNellUnitaException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 public class Dipendente implements Serializable {
@@ -92,10 +93,7 @@ public class Dipendente implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = nome.hashCode();
-        result = 31 * result + cognome.hashCode();
-        result = 31 * result + eta;
-        return result;
+        return Objects.hash(nome, cognome, eta, citta);
     }
 
     @Override

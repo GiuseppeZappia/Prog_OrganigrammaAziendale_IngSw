@@ -29,7 +29,8 @@ public class HistoryCommandHandler implements CommandHandler {
                 history.clear();
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+//            throw new RuntimeException(e);
         }
         if (!redoList.isEmpty())
             redoList.clear();

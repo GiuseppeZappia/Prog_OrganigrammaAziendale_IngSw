@@ -1,14 +1,10 @@
 package command;
 
-import command.FactoryDialog.CreateDialog;
-import command.FactoryDialog.RimuoviDipendenteDialogFactory;
+import command.CreationDialogImplementation.CreateDialog;
+import command.CreationDialogImplementation.RimuoviDipendenteDialog;
 import composite.OrganigrammaElement;
-import composite.utilities.Dipendente;
-import exceptions.DipendenteNonPresenteNellUnitaException;
 import gui.PannelloDisegno;
 import javax.swing.*;
-import java.awt.*;
-import java.util.Collection;
 
 public class RimuoviDipendenteCommand implements Command{
     private PannelloDisegno pd;
@@ -18,7 +14,7 @@ public class RimuoviDipendenteCommand implements Command{
     public RimuoviDipendenteCommand(PannelloDisegno pd, OrganigrammaElement elem){
         this.pd = pd;
         this.elem = elem;
-        this.createDialog=new RimuoviDipendenteDialogFactory();
+        this.createDialog=new RimuoviDipendenteDialog();
     }
 
     @Override

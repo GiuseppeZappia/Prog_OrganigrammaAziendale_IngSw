@@ -1,15 +1,14 @@
-package command.FactoryDialog;
-
+package command.CreationDialogImplementation;
 import composite.OrganigrammaElement;
 import composite.utilities.Dipendente;
+import composite.utilities.Ruolo;
 import exceptions.DipendenteNonPresenteNellUnitaException;
 import gui.PannelloDisegno;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-public class RimuoviDipendenteDialogFactory implements CreateDialog {
+public class CambiaRuoloUtenteDialog implements CreateDialog {
     private PannelloDisegno pd;
     private OrganigrammaElement elem;
 
@@ -18,25 +17,30 @@ public class RimuoviDipendenteDialogFactory implements CreateDialog {
         this.pd = pd;
         this.elem = elem;
         Frame framePrincipale = (Frame) SwingUtilities.getWindowAncestor(pd);
-        JDialog finestra = new JDialog(framePrincipale, "Eliminazione dipendente", true);//mettendo true so che nel frattempo utente non puo usare resto dell'app ma in caso deve chiudere dialogo
+        JDialog finestra = new JDialog(framePrincipale, "Cambio ruolo", true);//mettendo true so che nel frattempo utente non puo usare resto dell'app ma in caso deve chiudere dialogo
         JPanel pannello = new JPanel();
         GroupLayout layout = new GroupLayout(pannello);
         pannello.setLayout(layout);
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
-        JLabel messaggio = new JLabel("Scegli un dipendente tra quelli presenti");
-        String[] nomeDipendenti = listaDipendentiPresenti();
-        JComboBox<String> opzioni = new JComboBox<>(nomeDipendenti);
         JButton ok = new JButton("OK");
-        if (nomeDipendenti.length == 0) {//non ho nemmeno un dipendente da rimuovere
+        JButton cancel = new JButton("Cancella");
+        JLabel messaggio = new JLabel("Scegli il dipendente a cui cambiare il ruolo");
+        JLabel scegliRuolo = new JLabel("Scegli un nuovo ruolo per questo dipendente");
+        String[] nomiDipendenti = listaDipendentiPresenti();
+        JComboBox<String> opzioni = new JComboBox<>(nomiDipendenti);
+        if (nomiDipendenti.length == 0) {//non ho nemmeno un dipendente
             ok.setEnabled(false);
         }
-        JButton cancel = new JButton("Cancella");
+        String[] nomiRuoli = listaRuoliPresenti();
+        JComboBox<String> opzioniRuoli = new JComboBox<>(nomiRuoli);
         ok.addActionListener(e -> {
-            String scelto = (String) opzioni.getSelectedItem();
-            Dipendente dipendente = trovaDipendente(scelto);
+            String dipendenteScelto = (String) opzioni.getSelectedItem();
+            String ruoloScelto = (String) opzioniRuoli.getSelectedItem();
+            Dipendente dipendente = trovaDipendente(dipendenteScelto);
+            Ruolo ruolo = trovaRuolo(ruoloScelto);
             try {
-                this.elem.removeDipendente(dipendente);
+                dipendente.cambiaRuolo(ruolo, elem);
             } catch (DipendenteNonPresenteNellUnitaException ex) {
                 throw new RuntimeException(ex);
             }
@@ -47,14 +51,19 @@ public class RimuoviDipendenteDialogFactory implements CreateDialog {
         });
         layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addComponent(messaggio)
+                .addComponent(scegliRuolo)
                 .addComponent(opzioni, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(opzioniRuoli)
                 .addGroup(layout.createSequentialGroup()
                         .addComponent(ok)
                         .addComponent(cancel))
         );
+
         layout.setVerticalGroup(layout.createSequentialGroup()
                 .addComponent(messaggio)
                 .addComponent(opzioni, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addComponent(scegliRuolo)
+                .addComponent(opzioniRuoli, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(ok)
                         .addComponent(cancel))
@@ -62,6 +71,17 @@ public class RimuoviDipendenteDialogFactory implements CreateDialog {
         finestra.add(pannello);
         finestra.pack();
         return finestra;
+    }
+
+    private Ruolo trovaRuolo(String scelto) {
+        for (OrganigrammaElement elem : pd.getUnitaDisegnate()) {
+            for (Ruolo r : elem.getRuoliDisponibili()) {
+                if (r.getNome().equals(scelto)) {
+                    return r;
+                }
+            }
+        }
+        return null;//non restituisco mai null perche passo una stringa che è stata scelta tra nomi di ruoli esistenti
     }
 
     private Dipendente trovaDipendente(String scelto) {
@@ -88,5 +108,14 @@ public class RimuoviDipendenteDialogFactory implements CreateDialog {
         return ret;
     }
 
+    private String[] listaRuoliPresenti() {
+        Collection<Ruolo> ruoli = elem.getRuoliDisponibili();
+        String[] ret = new String[ruoli.size()];
+        int i = 0;
+        for (Ruolo elem : ruoli) {
+            ret[i] = elem.getNome();
+            i++;
+        }
+        return ret;
+    }
 }
-

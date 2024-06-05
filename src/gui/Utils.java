@@ -3,7 +3,8 @@ package gui;
 import java.io.File;
 
 
-//dalla documetazione vedo che va creata questa classe di utilita con questo metodo per prendere cosi estensione facendo semplice parsing dei nomi
+//dalla documetazione vedo che va creata questa classe di utilita con questo
+//metodo per prendere cosi estensione facendo semplice parsing dei nomi
 public class Utils {
 
     public static String getExtension(File f){

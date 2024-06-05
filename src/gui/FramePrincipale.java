@@ -11,8 +11,8 @@ public class FramePrincipale extends JFrame {
 
     public FramePrincipale() {
             setTitle("Organigramma Maker");
-//            setExtendedState(JFrame.MAXIMIZED_BOTH);//dimens
-            setSize(800, 600);
+            setExtendedState(JFrame.MAXIMIZED_BOTH);//dimens
+//            setSize(800, 600);
             setLocationRelativeTo(null);//spawna al centro
             setLayout(new BorderLayout());//metto quel layout della doc carino
             fileChooser = new JFileChooser();

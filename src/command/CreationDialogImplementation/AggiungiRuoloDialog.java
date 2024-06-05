@@ -1,4 +1,4 @@
-package command.FactoryDialog;
+package command.CreationDialogImplementation;
 
 import composite.OrganigrammaElement;
 import composite.utilities.Ruolo;
@@ -10,7 +10,7 @@ import java.awt.*;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 
-public class AggiungiRuoloDialogFactory implements CreateDialog{
+public class AggiungiRuoloDialog implements CreateDialog{
     private PannelloDisegno pd;
     private OrganigrammaElement elem;
 
@@ -60,7 +60,7 @@ public class AggiungiRuoloDialogFactory implements CreateDialog{
                 JOptionPane.showMessageDialog(pd, "Parametri mancanti o non validi", "Errore nell'inserimento", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if(nome.trim().isEmpty()||descrizione.trim().isEmpty()||requisiti.trim().isEmpty()||stipendio.intValue()<0){
+            if(nome.isBlank()||descrizione.isBlank()||requisiti.isBlank()||stipendio.intValue()<0){
                 JOptionPane.showMessageDialog(pd, "Parametri mancanti o non validi", "Errore nell'inserimento", JOptionPane.ERROR_MESSAGE);
                 return;
             }

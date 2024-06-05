@@ -1,4 +1,4 @@
-package command.FactoryDialog;
+package command.CreationDialogImplementation;
 
 import composite.OrganigrammaElement;
 import gui.PannelloDisegno;

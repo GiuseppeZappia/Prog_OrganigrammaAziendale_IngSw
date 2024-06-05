@@ -4,7 +4,6 @@ import command.*;
 import composite.OrganigrammaElement;
 
 import javax.swing.*;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.Serializable;

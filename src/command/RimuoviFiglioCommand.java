@@ -6,13 +6,15 @@ import exceptions.FiglioNonPresenteInQuestaUnitaException;
 import exceptions.SubjectSenzaListenerInAscoltoException;
 import composite.OrganigrammaElement;
 import gui.PannelloDisegno;
-import memento.PannelloDisegnoMemento;
+import memento.Memento;
+//import memento.PannelloDisegnoMemento;
 
 public class RimuoviFiglioCommand implements Command{
 
     private OrganigrammaElement elementoDaElimin,padre;
     private PannelloDisegno pd;
-    private PannelloDisegnoMemento memento;
+//    private PannelloDisegnoMemento memento;
+    private Memento memento;
 
     public RimuoviFiglioCommand(OrganigrammaElement padre,OrganigrammaElement ele, PannelloDisegno pd){
         this.padre=padre;

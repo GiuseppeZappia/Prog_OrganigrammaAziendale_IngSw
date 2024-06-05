@@ -1,4 +1,4 @@
-package command.FactoryDialog;
+package command.CreationDialogImplementation;
 
 import composite.OrganigrammaElement;
 import composite.utilities.Ruolo;
@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.LinkedList;
 
-public class RimuoviRuoloDialogFactory implements CreateDialog {
+public class RimuoviRuoloDialog implements CreateDialog {
     private PannelloDisegno pd;
     private OrganigrammaElement elem;
 

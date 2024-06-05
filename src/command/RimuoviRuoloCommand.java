@@ -1,7 +1,7 @@
 package command;
 
-import command.FactoryDialog.CreateDialog;
-import command.FactoryDialog.RimuoviRuoloDialogFactory;
+import command.CreationDialogImplementation.CreateDialog;
+import command.CreationDialogImplementation.RimuoviRuoloDialog;
 import composite.OrganigrammaElement;
 import gui.PannelloDisegno;
 import javax.swing.*;
@@ -13,7 +13,7 @@ public class RimuoviRuoloCommand implements Command{
     public RimuoviRuoloCommand(PannelloDisegno pd,OrganigrammaElement elem) {
         this.elem = elem;
         this.pd = pd;
-        this.createDialog=new RimuoviRuoloDialogFactory();
+        this.createDialog=new RimuoviRuoloDialog();
     }
 
     @Override

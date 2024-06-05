@@ -4,6 +4,7 @@ import exceptions.*;
 import mediator.ChangeManagerMediator;
 import composite.utilities.Dipendente;
 import composite.utilities.Ruolo;
+import mediator.ConcreteChangheManagerMediator;
 import observer.CambiamentoUnitaListener;
 
 import java.util.*;
@@ -17,10 +18,10 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
     private ArrayList<Ruolo> ruoliDisponibili = new ArrayList<>();
     private ArrayList<Dipendente> dipendentiUnita = new ArrayList<>();
     private HashMap<Dipendente, Ruolo> personaleUnita = new HashMap<>();
+    private ChangeManagerMediator mediator= ConcreteChangheManagerMediator.MEDIATOR;
 
-    protected abstract ChangeManagerMediator getMediatore(); //factoryMethod????
-                                                             //lo lascio???????
-                                                             //NON DOVREBBE ESSERE FACTORY
+//    protected abstract ChangeManagerMediator getMediatore(); //factoryMethod????
+
 
     protected ArrayList<OrganigrammaElement> getElements() {
         return elements;
@@ -151,7 +152,7 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
 
     @Override
     public void removeAllListeners() throws SubjectSenzaListenerInAscoltoException {
-        getMediatore().unregisterAll(this);
+        mediator.unregisterAll(this);
     }
 
     //INUTILE PER COME HO IMPLLEMENTATO LO CHIAMAVO SOPRA NEL CHANGERUOLO MA ORA HO COMMENTATO CHIAMATA
@@ -161,23 +162,23 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
 //    }
 
 
-    public void notifyAddedChild(OrganigrammaElement padre, OrganigrammaElement figlio) throws SubjectSenzaListenerInAscoltoException {
-        getMediatore().notifyAddedChild(padre, figlio);//MEDIATORE SI OCCUPA DI AVVISARE I LISTENER DI QUEL SUBJECT CHE FIGLIO È VARIATO
+    protected void notifyAddedChild(OrganigrammaElement padre, OrganigrammaElement figlio) throws SubjectSenzaListenerInAscoltoException {
+        mediator.notifyAddedChild(padre, figlio);//MEDIATORE SI OCCUPA DI AVVISARE I LISTENER DI QUEL SUBJECT CHE FIGLIO È VARIATO
     }
 
     @Override
     public void addListener(CambiamentoUnitaListener l) {
-        getMediatore().registerListenerForSubject(this, l);
+        mediator.registerListenerForSubject(this, l);
     }
 
     @Override
     public void removeListener(CambiamentoUnitaListener l) {
-        getMediatore().unregisterListenerForSubject(this, l);
+        mediator.unregisterListenerForSubject(this, l);
     }
 
 
-    public void notifyRemovedChild(OrganigrammaElement figlioEliminato) throws SubjectSenzaListenerInAscoltoException {
-        getMediatore().notifyRemovedChild(this, figlioEliminato);
+    protected void notifyRemovedChild(OrganigrammaElement figlioEliminato) throws SubjectSenzaListenerInAscoltoException {
+        mediator.notifyRemovedChild(this, figlioEliminato);
     }
 
     @Override

@@ -10,11 +10,12 @@ import composite.utilities.Ruolo;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class ConcreteChangheManagerMediator implements ChangeManagerMediator {
+public enum ConcreteChangheManagerMediator implements ChangeManagerMediator {
+    MEDIATOR;//SINGLETON, DEVE ESSERE UNICO.
     //PER OGNI UNITA HO LA LISTA DEI SUOI LISTENER
     private HashMap<OrganigrammaElement, LinkedList<CambiamentoUnitaListener>> listenersForSubject = new HashMap<>();
 
-    public ConcreteChangheManagerMediator() {}
+    private ConcreteChangheManagerMediator() {}
 
     //FAI CONTROLLO SE ESISTE SUBJECT SU TUTTI
 
@@ -57,17 +58,6 @@ public class ConcreteChangheManagerMediator implements ChangeManagerMediator {
             listener.inseritoFiglio(subject, child);
         }
     }
-
-
-//    @Override
-//    public void notifyRemovedRuolo(OrganigrammaElement subject, Ruolo r, LinkedList<Dipendente> dipendentiToChangeRole) throws SubjectSenzaListenerInAscoltoException {
-//        if (!listenersForSubject.containsKey(subject)) {
-//            throw new SubjectSenzaListenerInAscoltoException();
-//        }
-//        for (CambiamentoUnitaListener listener : listenersForSubject.get(subject)) {
-//            //listener.ruoloCambiato(r, dipendentiToChangeRole);//COSI ELEMENTO DELLA GUI RICEVE CAMBIAMENTO E PROCEDE CON LE SUE OPERAZIONI
-//        }
-//    }
 
     @Override
     public void notifyRemovedChild(OrganigrammaElement subject, OrganigrammaElement child) throws SubjectSenzaListenerInAscoltoException {

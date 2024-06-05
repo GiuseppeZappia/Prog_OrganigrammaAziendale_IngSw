@@ -1,4 +1,4 @@
-package command.FactoryDialog;
+package command.CreationDialogImplementation;
 
 import composite.OrganigrammaElement;
 import composite.utilities.Dipendente;
@@ -12,11 +12,11 @@ import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.LinkedList;
 
-public class AggiungiDipendenteDialogFactory implements CreateDialog {
+public class AggiungiDipendenteDialog implements CreateDialog {
     private PannelloDisegno pd;
     private OrganigrammaElement elem;
 
-    public AggiungiDipendenteDialogFactory() {}
+    public AggiungiDipendenteDialog() {}
 
     @Override
     public JDialog createDialog(PannelloDisegno pd, OrganigrammaElement elem) {
@@ -76,7 +76,7 @@ public class AggiungiDipendenteDialogFactory implements CreateDialog {
                 JOptionPane.showMessageDialog(pd, "Parametri mancanti o non validi", "Errore nell'inserimento", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (nome.trim().isEmpty() || cognome.trim().isEmpty() || citta.trim().isEmpty() || indirizzo.trim().isEmpty() || eta.intValue() < 0) {
+            if (nome.isBlank() || cognome.isBlank() || citta.isBlank() || indirizzo.isBlank() || eta.intValue() < 0) {
                 JOptionPane.showMessageDialog(pd, "Parametri mancanti o non validi", "Errore nell'inserimento", JOptionPane.ERROR_MESSAGE);
                 return;
             }//POTREI UNIRE I DUE IF, LO FACCIO PER MAGGIORRE CHIAREZZA
@@ -246,7 +246,7 @@ public class AggiungiDipendenteDialogFactory implements CreateDialog {
     private String[] listaDipendentiPresenti() {
         LinkedList<String> lista = new LinkedList<>();
         for (OrganigrammaElement elem : pd.getUnitaDisegnate()) {
-            if (!elem.equals(this.elem) ) {//cosi non do possibilita di inserire in un ruolo un dipendente dello stesso
+            if (!elem.equals(this.elem) ) {//cosi non do possibilita di inserire in un ruolo un dipendente della stessa unita
                 for (Dipendente d : elem.getDipendenti()) {
                     String toAdd=d.getNome() + "-" + d.getCognome() + "-" + d.getEta();
                     if(!lista.contains(toAdd)) {

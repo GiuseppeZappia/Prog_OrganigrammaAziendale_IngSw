@@ -4,7 +4,7 @@ import exceptions.FiglioNonPresenteInQuestaUnitaException;
 import exceptions.FiglioUnitaNonValidoException;
 import exceptions.SubjectSenzaListenerInAscoltoException;
 import mediator.ChangeManagerMediator;
-import memento.PannelloDisegnoMemento;
+import mediator.ConcreteChangheManagerMediator;
 import observer.CambiamentoUnitaListener;
 
 import java.util.*;
@@ -13,17 +13,17 @@ import java.util.*;
 public class OrganoGestione extends AbstractCompositeElementOrganigramma {
     private String nome;
     //EVENTUALMENTE TRANSIENT
-    private ChangeManagerMediator mediatore;
+    private ChangeManagerMediator mediatore= ConcreteChangheManagerMediator.MEDIATOR;
 
-    public OrganoGestione(String nome,ChangeManagerMediator mediatore) {
+    public OrganoGestione(String nome) {
         this.nome = nome;
-        this.mediatore = mediatore;
+//        this.mediatore = mediatore;
     }
 
-    @Override//protected perche è factory???
-    protected ChangeManagerMediator getMediatore() {
-        return this.mediatore;
-    }
+//    @Override//protected perche è factory
+//    protected ChangeManagerMediator getMediatore() {
+//        return this.mediatore;
+//    }
 
     @Override
     public String getNome() {

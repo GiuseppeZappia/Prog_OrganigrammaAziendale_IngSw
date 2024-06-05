@@ -4,11 +4,12 @@ import command.*;
 import composite.OrganoGestione;
 import exceptions.FiglioUnitaNonValidoException;
 import exceptions.SubjectSenzaListenerInAscoltoException;
-import memento.PannelloDisegnoMemento;
+import memento.Memento;
 import observer.CambiamentoUnitaListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serializable;
 import java.util.*;
 
 import composite.OrganigrammaElement;
@@ -53,10 +54,11 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
         }
     }
 
-    public void ripristinaMemento(PannelloDisegnoMemento memento) {
+    public void ripristinaMemento(Memento memento) {
+        if(memento instanceof PannelloDisegnoMemento pannellomemento){
         unitaDisegnate.clear();
         puntiOccupati.clear();
-        for (Map.Entry entry : memento.getFigli().entrySet()) {
+        for (Map.Entry entry : pannellomemento.getStato().entrySet()) {
             OrganigrammaElement padre = (OrganigrammaElement) entry.getKey();
             padre.rimuoviFigliTutti();
             padre.addListener(this);
@@ -73,6 +75,7 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
             }
         }
         this.repaint();
+        }
     }
 
 
@@ -253,5 +256,17 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
     public void aggiungiUnita(OrganigrammaElement unita) {
         unitaDisegnate.add(unita);
         this.repaint();
+    }
+
+    private class PannelloDisegnoMemento implements Memento, Serializable {
+        private LinkedHashMap<OrganigrammaElement,LinkedList<OrganigrammaElement>> figliPresenti=new LinkedHashMap<>();
+
+        public PannelloDisegnoMemento(LinkedHashMap<OrganigrammaElement,LinkedList<OrganigrammaElement>> figli) {
+            this.figliPresenti=figli;
+        }
+
+        public LinkedHashMap<OrganigrammaElement, LinkedList<OrganigrammaElement>> getStato() {
+            return figliPresenti;
+        }
     }
 }

@@ -1,7 +1,7 @@
 package command;
 
-import command.FactoryDialog.AggiungiDipendenteDialogFactory;
-import command.FactoryDialog.CreateDialog;
+import command.CreationDialogImplementation.AggiungiDipendenteDialog;
+import command.CreationDialogImplementation.CreateDialog;
 import composite.OrganigrammaElement;
 import gui.PannelloDisegno;
 import javax.swing.*;
@@ -14,7 +14,7 @@ public class AggiungiDipendenteCommand implements Command {
     public AggiungiDipendenteCommand(PannelloDisegno pd,OrganigrammaElement elem) {
         this.pd = pd;
         this.elem = elem;
-        this.createDialog=new AggiungiDipendenteDialogFactory();
+        this.createDialog=new AggiungiDipendenteDialog();
     }
 
     @Override

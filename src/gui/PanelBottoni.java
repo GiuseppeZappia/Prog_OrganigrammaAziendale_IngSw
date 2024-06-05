@@ -16,7 +16,8 @@ import composite.UnitaOrganizzativa;
 public class PanelBottoni extends JPanel {
     private final JButton creaOrgano,creaSottoUnita,rimuoviUnità,undo,redo,info;
     private final HistoryCommandHandler cmdHandler = new HistoryCommandHandler();
-    private final ChangeManagerMediator mediator = new ConcreteChangheManagerMediator();
+//    private final ChangeManagerMediator mediator = new ConcreteChangheManagerMediator();
+    private final ChangeManagerMediator mediator=ConcreteChangheManagerMediator.MEDIATOR;
 
     public PanelBottoni(PannelloDisegno pd) {
         setLayout(new FlowLayout(FlowLayout.LEFT));//layout che mette bottoni tutti belli in riga da sx
@@ -67,7 +68,7 @@ public class PanelBottoni extends JPanel {
                         JOptionPane.showMessageDialog(pd, "Impossibile creare unità senza nome", "Errore nell'inserimento", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    OrganigrammaElement elem = new OrganoGestione(nomeOrganoGestione, mediator);
+                    OrganigrammaElement elem = new OrganoGestione(nomeOrganoGestione);
                     elem.addListener(pd);
                     cmdHandler.handleCommand(new DisegnaElementCommand(pd,elem));
         }

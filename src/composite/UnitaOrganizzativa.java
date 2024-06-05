@@ -24,10 +24,10 @@ public class UnitaOrganizzativa extends AbstractCompositeElementOrganigramma{
         return nome;
     }
 
-    @Override//protected perche è factory???
-    protected ChangeManagerMediator getMediatore() {
-        return this.mediatore;
-    }
+//    @Override//protected perche è factory???
+//    protected ChangeManagerMediator getMediatore() {
+//        return this.mediatore;
+//    }
 
     @Override
     public boolean addChild(OrganigrammaElement element) throws FiglioUnitaNonValidoException, SubjectSenzaListenerInAscoltoException {
