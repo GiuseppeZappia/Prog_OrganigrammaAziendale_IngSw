@@ -87,7 +87,6 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
         if (dipendentiUnita.contains(d)) {
             throw new DipendenteGiaEsistenteException();
         }
-        //CONTROLLO SE RUOLO È VALIDO OPPURE NO VISTO CHE LO FACCIO SCEGLIERE TRA QUELLI PRESENTI??
         personaleUnita.put(d, d.getRuolo(this));//LO INSERISCO NEL PERSONALE
         return dipendentiUnita.add(d);//LO INSERISCO TRA I DIPENDENTI
     }
@@ -103,14 +102,10 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
     }
 
 
-    //METTO PRIVATO SE USO SOLO IO
     private boolean removePersonale(Dipendente d) throws DipendenteNonPresenteNellUnitaException {
         if (!personaleUnita.containsKey(d)) {
             throw new DipendenteNonPresenteNellUnitaException();
         }
-        //QUA CONTROLLO SU RUOLO LO FACCIO PASSANDO COME PARAMETRO ANCHE RUOLO UTENTE?
-        // O COME PRIMA VISTO CHE TANTO LO CHIAMO IO PASSANDO
-        //IL GET RUOLO DEL CLIENTE CHE SO ESSERE VALIDO NON NE VALE LA PENA?
         personaleUnita.remove(d);
         return true;
     }
@@ -120,9 +115,7 @@ public abstract class AbstractCompositeElementOrganigramma implements Organigram
         elements.clear();
     }
 
-    //NON USO ADDPERSONALE PERCHE VOGLIO CHE QUESTO SIA CHIAMATO SOLO QUANDO SONO SICURO CHE ANCHE NELL'OGGETTO DIPENDENTE IL RUOLO
-    //SIA STATO CAMBIATO INOLTRE QUA DEVO CONTROLLARE CHE DIPENDENTE CI SIA GIA TRA IL PERSONALE SOPRA INVECE NO
-    @Override
+   @Override
     public boolean changeRuoloToDipendente(Dipendente d,Ruolo nuovo) throws DipendenteNonPresenteNellUnitaException {
         if (!dipendentiUnita.contains(d)) {
             throw new DipendenteNonPresenteNellUnitaException();

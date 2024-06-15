@@ -17,7 +17,8 @@ public class CambiaRuoloUtenteDialog implements CreateDialog {
         this.pd = pd;
         this.elem = elem;
         Frame framePrincipale = (Frame) SwingUtilities.getWindowAncestor(pd);
-        JDialog finestra = new JDialog(framePrincipale, "Cambio ruolo", true);//mettendo true so che nel frattempo utente non puo usare resto dell'app ma in caso deve chiudere dialogo
+        JDialog finestra = new JDialog(framePrincipale, "Cambio ruolo", true);
+        //mettendo true so che nel frattempo utente non puo usare resto dell'app ma in caso deve chiudere dialogo
         JPanel pannello = new JPanel();
         GroupLayout layout = new GroupLayout(pannello);
         pannello.setLayout(layout);

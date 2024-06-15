@@ -18,9 +18,6 @@ public class VisualizzaPersonaleUnitaCommand implements Command {
         this.pd = pd;
     }
 
-    //PER QUESTI METODI MOLTO SIMILI TRA LORO POTREI METTERE METODO DEFAUL?? OPPURE NO PERCHE SAREBBE PUBBLICO?
-    //MAGARI FAI CLASSE ASTRATTA DOVE METTI PROTECTED/PACKAGE QUESTI METODI
-
     @Override
     public boolean doIt() {
         Frame framePrincipale= (Frame) SwingUtilities.getWindowAncestor(pd);

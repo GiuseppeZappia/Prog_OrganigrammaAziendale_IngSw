@@ -1,6 +1,6 @@
 package exceptions;
 
-public class DipendenteGiaEsistenteException extends Exception {
+public class DipendenteGiaEsistenteException extends RuntimeException {
     public DipendenteGiaEsistenteException() {
         super("DIPENDENTE GIA ESISTENTE");
     }

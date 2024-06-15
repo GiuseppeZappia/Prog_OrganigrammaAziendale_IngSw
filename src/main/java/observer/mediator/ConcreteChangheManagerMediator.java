@@ -9,6 +9,7 @@ import java.util.LinkedList;
 
 public enum ConcreteChangheManagerMediator implements ChangeManagerMediator {
     MEDIATOR;//SINGLETON, DEVE ESSERE UNICO.
+    
     //PER OGNI UNITA HO LA LISTA DEI SUOI LISTENER
     private HashMap<OrganigrammaElement, LinkedList<CambiamentoUnitaListener>> listenersForSubject = new HashMap<>();
     private static final long serialVersionUID = 1L;

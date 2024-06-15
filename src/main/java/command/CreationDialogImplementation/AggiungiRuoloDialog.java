@@ -22,7 +22,8 @@ public class AggiungiRuoloDialog implements CreateDialog{
         //DEVO PASSARE AL JDIALOG L'OWNER, LO RICAVO DAL MIO PANNELLO DI DISEGNO
         //FACCIO CAST SENZA INSTANCEOF PERCHE SONO SICURO CHE IL JPANEL IN QUESTIONE SIA QUELLO CHE HA COME PADRE IL FRAME
         Frame framePrincipale= (Frame) SwingUtilities.getWindowAncestor(pd);
-        JDialog finestra=new JDialog(framePrincipale,"Inserimento ruolo",true);//mettendo true so che nel frattempo utente non puo usare resto dell'app ma in caso deve chiudere dialogo
+        JDialog finestra=new JDialog(framePrincipale,"Inserimento ruolo",true);
+        //mettendo true so che nel frattempo utente non puo usare resto dell'app ma in caso deve chiudere dialogo
         finestra.setLocationRelativeTo(null);//al centro
         JPanel pannello=new JPanel();
         GroupLayout layout = new GroupLayout(pannello);

@@ -5,17 +5,19 @@ import exceptions.FiglioUnitaNonValidoException;
 import exceptions.SubjectSenzaListenerInAscoltoException;
 import memento.Memento;
 import observer.CambiamentoUnitaListener;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.Serializable;
 import java.util.*;
+
 import composite.OrganigrammaElement;
 
 public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener {
     private final LinkedList<OrganigrammaElement> unitaDisegnate = new LinkedList<>();
     private final HashMap<OrganigrammaElement, Point> puntiOccupati = new HashMap<>();
     private int maxLarg = this.getWidth();
-    private int maxAlt=this.getHeight();
+    private int maxAlt = this.getHeight();
     private int rettLarg = 150;
     private int rettAlt = 50;
     int spazioTraRettOri = 60;
@@ -28,15 +30,15 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
 
     public PannelloDisegnoMemento creaMemento() {
         LinkedHashMap<OrganigrammaElement, LinkedList<OrganigrammaElement>> figliPresenti = new LinkedHashMap<>();
-        if(!unitaDisegnate.isEmpty()) {
-        OrganoGestione orgGest = (OrganoGestione) unitaDisegnate.getFirst();
-        figliPresenti.put(orgGest, new LinkedList<>(orgGest.getChild()));
-        for (OrganigrammaElement figlio : orgGest.getChild()) {
-            LinkedList<OrganigrammaElement> figliDeiFigli = new LinkedList<>();
-            figliDeiFigli.addAll(figlio.getChild());//aggiunto tutte le sotto unità di quella unita
-            figliPresenti.put(figlio, figliDeiFigli);
-            trovaFigliUlteriori(figlio.getChild(), figliPresenti);
-        }
+        if (!unitaDisegnate.isEmpty()) {
+            OrganoGestione orgGest = (OrganoGestione) unitaDisegnate.getFirst();
+            figliPresenti.put(orgGest, new LinkedList<>(orgGest.getChild()));
+            for (OrganigrammaElement figlio : orgGest.getChild()) {
+                LinkedList<OrganigrammaElement> figliDeiFigli = new LinkedList<>();
+                figliDeiFigli.addAll(figlio.getChild());//aggiungo tutte le sotto unità di quella unita
+                figliPresenti.put(figlio, figliDeiFigli);
+                trovaFigliUlteriori(figlio.getChild(), figliPresenti);
+            }
         }
         return new PannelloDisegnoMemento(figliPresenti);
     }
@@ -55,26 +57,26 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
     }
 
     public void ripristinaMemento(Memento memento) {
-        if(memento instanceof PannelloDisegnoMemento pannellomemento){
-        unitaDisegnate.clear();
-        puntiOccupati.clear();
-        for (Map.Entry entry : pannellomemento.getStato().entrySet()) {
-            OrganigrammaElement padre = (OrganigrammaElement) entry.getKey();
-            padre.rimuoviFigliTutti();
-            padre.addListener(this);
-            if (!unitaDisegnate.contains(padre)) {
-                unitaDisegnate.add(padre);//magari l'ho aggiunto con la addChiild o magari no, quindi controllo
-            }
-            LinkedList<OrganigrammaElement> figli = (LinkedList<OrganigrammaElement>) entry.getValue();
-            for (OrganigrammaElement elem : figli) {
-                try {
-                    padre.addChild(elem);
-                } catch (FiglioUnitaNonValidoException | SubjectSenzaListenerInAscoltoException e) {
-                    throw new RuntimeException(e);
+        if (memento instanceof PannelloDisegnoMemento pannellomemento) {
+            unitaDisegnate.clear();
+            puntiOccupati.clear();
+            for (Map.Entry entry : pannellomemento.getStato().entrySet()) {
+                OrganigrammaElement padre = (OrganigrammaElement) entry.getKey();
+                padre.rimuoviFigliTutti();
+                padre.addListener(this);
+                if (!unitaDisegnate.contains(padre)) {
+                    unitaDisegnate.add(padre);//magari l'ho aggiunto con la addChild o magari no, quindi controllo
+                }
+                LinkedList<OrganigrammaElement> figli = (LinkedList<OrganigrammaElement>) entry.getValue();
+                for (OrganigrammaElement elem : figli) {
+                    try {
+                        padre.addChild(elem);
+                    } catch (FiglioUnitaNonValidoException | SubjectSenzaListenerInAscoltoException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
-        }
-        this.repaint();
+            this.repaint();
         }
     }
 
@@ -83,8 +85,7 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
         OrganigrammaElement ret = null;
         for (Map.Entry entry : puntiOccupati.entrySet()) {
             Point punto = (Point) entry.getValue();
-            //CAMBIARE QUI METTENDO VALORE RETTANFOLO VARIABILE E NON 150 O 50
-            if ((x >= punto.x && y >= punto.y) && (x <= punto.x + 150 && y <= punto.y + 50)) {
+            if ((x >= punto.x && y >= punto.y) && (x <= punto.x + rettLarg && y <= punto.y + rettAlt)) {
                 ret = (OrganigrammaElement) entry.getKey();
             }
         }
@@ -97,7 +98,7 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
 
     @Override
     public Dimension preferredSize() {
-        if(unitaDisegnate.isEmpty()){
+        if (unitaDisegnate.isEmpty()) {
             return new Dimension(0, 0);
         }
         return new Dimension(maxLarg, maxAlt);
@@ -108,11 +109,12 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
         super.paintComponent(g);
         if (!unitaDisegnate.isEmpty()) {
             Graphics2D g2 = (Graphics2D) g;
-            OrganigrammaElement orgGest = unitaDisegnate.getFirst();//FAI IN MODO CHE AGGIUNGA SEMPRE PER PRIMO QUESTO OPPURE IMPL != QUI
+            //FACCIO INFATTI MODO CHE IL PRIMO ELEMENTO DELLA LISTA SIA SEMPRE L'ORGANO DI GESTIONE
+            OrganigrammaElement orgGest = unitaDisegnate.getFirst();
             //CERCO PUNTO CENTRALE FINESTRA PER DISEGNARE RETTANGOLO
-            int rettX = (getWidth() - 150) / 2; //dove 150 è dim rett
+            int rettX = (getWidth() - rettLarg) / 2; //dove 150 è dim rett
             puntiOccupati.clear();
-            disegnaTutto(g2, orgGest, rettX, 60);
+            disegnaTutto(g2, orgGest, rettX, spazioTraRettVer);
         }
         revalidate();//per fargli aggiornare dimensioni e garantire di aggiungere scrollBar se serve
     }
@@ -120,7 +122,6 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
     private void disegnaTutto(Graphics2D g, OrganigrammaElement orgGest, int x, int y) {
         g.drawRect(x, y, rettLarg, rettAlt);
         puntiOccupati.put(orgGest, new Point(x, y));//aggiungo punto del rett disegnato
-
         Font font = g.getFont();
         Font ridimensionato = fontRimpicciolito(g, orgGest.getNome(), rettLarg - 10);
         g.setFont(ridimensionato);
@@ -130,22 +131,15 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
 
         g.drawString(orgGest.getNome(), textX, textY);
         maxLarg = Math.max(maxLarg, x + rettLarg);
-        maxAlt = Math.max(maxAlt, y + rettAlt+20);
+        maxAlt = Math.max(maxAlt, y + rettAlt + 20);
 
         if (!orgGest.getChild().isEmpty()) {
             int spazioOccupatoDaiFigli = calcolaSpazioOccupato(orgGest, rettLarg, spazioTraRettOri);
-            int startX = x + (rettLarg - spazioOccupatoDaiFigli) / 2;//rettLarg-spazioOcc perche se non avessi figli spazioOcc è rettLarg quindi disegno in X, sotto mio padre
-            int centroX = x + rettLarg / 2;
-            int bottomY = y + rettAlt;
-
-            int lineaOrizzY = bottomY + spazioTraRettVer / 2;//coordinta y della mia linea
-//            g.drawLine(centroX,bottomY,centroX,lineaOrizzY); //linea dal mio rett attuale in giu
+            //rettLarg-spazioOcc perche se non avessi figli spazioOcc è rettLarg quindi disegno in X, sotto mio padre
+            int startX = x + (rettLarg - spazioOccupatoDaiFigli) / 2;
 
             int i = 0;
-            Point coordPrimoFiglio = null;
-            Point coordultimoFiglio = null;
             for (OrganigrammaElement unita : orgGest.getChild()) {//SO CHE AVRO SOLO UNITAGESTIONE
-                //int spazioOccupatoFiglio=calcolaSpazioOccupato(unita,rettLarg,spazioTraRettOri);
                 int childX = startX;
                 int childY = y + rettAlt + spazioTraRettVer;
 
@@ -156,33 +150,17 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
                     childX = collisione(childX, childY) + spazioTraRettOri;//restituisco punto piu a dx della collisione quindi bordo rettangolo e ci aggiungo spazioOriz
                 }
 
-                int figlioCentrX = childX + rettLarg / 2;
-//                g.drawLine(figlioCentrX,lineaOrizzY,figlioCentrX,lineaOrizzY+spazioTraRettVer/2);
-
                 disegnaTutto(g, unita, childX, childY);
 
-                //startX=spazioOccupatoFiglio+spazioTraRettOri;
-                if (i == 0) {
-                    coordPrimoFiglio = new Point(childX + rettLarg / 2, childY);
-                }
-                if (i == orgGest.getChildCount() - 1) {
-                    coordultimoFiglio = new Point(childX + rettLarg / 2, childY);
-                }
                 g.drawLine(x + rettLarg / 2, y + rettAlt, childX + rettLarg / 2, childY);
                 i++;
             }
-            if (coordPrimoFiglio != null && coordultimoFiglio != null) {
-//               g.drawLine(coordPrimoFiglio.x,lineaOrizzY,coordultimoFiglio.x,lineaOrizzY);
-            }
-//            g.drawLine(coordPrimoFiglio.x,lineaOrizzY,x+rettLarg/2,y+rettAlt+spazioTraRettVer/2);//se ci fosse un solo figlio infatti i due if disegnerebbero un singolo punto cosi no, se invece ce ne sono di piu questo non ha effetto perche comunque disegnerebbe su una linea gia fatta
         }
         g.setFont(font);//RIMETTO FONT ORIGINALE PER QUELLI DOPO SENNO DOPO CHE RIMPICCIOLISCO UNO ME LI RIMPICCIOLISCE TUTTI
     }
 
-    //qua passare larghezza come parametro visto che per prova avevo messo valore, cosi se cambiera mai non devo andare a cercare tutto nel codice
     private int collisione(int childX, int childY) {
         for (Point punto : puntiOccupati.values()) {
-            //eliminato da 2 partentesi && collisione(childX,childY)
             if (childY == punto.y && ((childX >= punto.x && childX <= punto.x + rettLarg) || (punto.x >= childX) || (childX - (punto.x + rettLarg) < spazioTraRettOri))) {
                 return punto.x + rettLarg;
             }
@@ -209,22 +187,8 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
         return g.getFont();
     }
 
-//    private int calcolaSpazioOccupato(OrganigrammaElement elem,int rettLarg, int spazio){
-//        //qua elimino per prova (elem instanceof SottoUnitaOrganizzativa)||
-//        //per albero infinito
-//        if(elem.getChild().isEmpty()){
-//            return rettLarg;
-//        }
-//        int spazioOccupato=0;
-//        for(OrganigrammaElement figlio : elem.getChild()){
-//            spazioOccupato+=calcolaSpazioOccupato(figlio,rettLarg,spazio)+spazio;
-//        }
-//        return spazioOccupato-spazio;
-//    }
-
     private int calcolaSpazioOccupato(OrganigrammaElement elem, int rettLarg, int spazio) {
-        //qua elimino per prova (elem instanceof SottoUnitaOrganizzativa)||
-        //per albero infinito
+
         if (elem.getChild().isEmpty()) {
             return rettLarg;
         }
@@ -248,13 +212,14 @@ public class PannelloDisegno extends JPanel implements CambiamentoUnitaListener 
         this.repaint();
     }
 
+    //MEMENTO PER ELIMINAZIONE PADRE E CARICARE ORGANIGRAMMA
     private static class PannelloDisegnoMemento implements Memento, Serializable {
         private static final long serialVersionUID = 1L;
 
-        private LinkedHashMap<OrganigrammaElement,LinkedList<OrganigrammaElement>> figliPresenti;
+        private LinkedHashMap<OrganigrammaElement, LinkedList<OrganigrammaElement>> figliPresenti;
 
-        public PannelloDisegnoMemento(LinkedHashMap<OrganigrammaElement,LinkedList<OrganigrammaElement>> figli) {
-            this.figliPresenti=figli;
+        public PannelloDisegnoMemento(LinkedHashMap<OrganigrammaElement, LinkedList<OrganigrammaElement>> figli) {
+            this.figliPresenti = figli;
         }
 
         public LinkedHashMap<OrganigrammaElement, LinkedList<OrganigrammaElement>> getStato() {

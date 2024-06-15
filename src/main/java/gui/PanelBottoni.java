@@ -90,10 +90,7 @@ public class PanelBottoni extends JPanel {
             JDialog finestra=apriFinestraDialogoComplessaRimozione(pd);
             finestra.setVisible(true);
         });
-
-
     }
-
 
     private JDialog apriFinestraDialogoComplessaAggiuntaUnita(PannelloDisegno pd){
         //DEVO PASSARE AL JDIALOG L'OWNER, LO RICAVO DAL MIO PANNELLO DI DISEGNO

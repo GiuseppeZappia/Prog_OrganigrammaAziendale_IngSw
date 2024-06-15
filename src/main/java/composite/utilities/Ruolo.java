@@ -16,16 +16,40 @@ public class Ruolo implements Serializable {
         this.stipendio = stipendio;
     }
 
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getDescrizione() {
+        return descrizione;
+    }
+
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }
+
+    public String getRequisiti() {
+        return requisiti;
+    }
+
+    public void setRequisiti(String requisiti) {
+        this.requisiti = requisiti;
+    }
+
+    public Number getStipendio() {
+        return stipendio;
+    }
+
+    public void setStipendio(Number stipendio) {
+        this.stipendio = stipendio;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ruolo ruolo = (Ruolo) o;
-        return
-//                Objects.equals(stipendio,ruolo.stipendio) &&
-                Objects.equals(nome, ruolo.nome) ;
-//                Objects.equals(descrizione, ruolo.descrizione) &&
-//                Objects.equals(requisiti, ruolo.requisiti);
+        return Objects.equals(nome, ruolo.nome) ;
     }
 
     @Override

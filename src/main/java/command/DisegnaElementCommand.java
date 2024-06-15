@@ -14,7 +14,6 @@ public class DisegnaElementCommand implements Command {
 
     @Override
     public boolean doIt(){
-//        pd.aggiungiUnita(element);
         pd.inseritoFiglio(element);
         return true;
     }//supporto agilmente undo e redo
@@ -22,7 +21,7 @@ public class DisegnaElementCommand implements Command {
 
     @Override
     public boolean undoIt(){
-        pd.rimossoFiglio(element);//qua a differenza chiamo rimosso figlio perche è quella che uso quando
+        pd.rimossoFiglio(element);
         //elimino organo di gestione, quindi non devo trovare un padre da cui eliminare questo elemento come con gli altri
         return true;
     }

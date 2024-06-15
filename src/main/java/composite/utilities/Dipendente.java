@@ -14,7 +14,6 @@ public class Dipendente implements Serializable {
     //STO FACENDO IN MODO CHE IN UNA SINGOLA UNITA IL DIPENDENTE POSSA RICOPRIRE UN SOLO RUOLO
     private HashMap<OrganigrammaElement,Ruolo> unitaDiCuiFaParte=new HashMap<>();
 
-    //fare in modo che per ogni dipendente possa vedere i RUOLI ricoperti
     private String nome,cognome,citta,indirizzo;
     private int eta;
     private static final long serialVersionUID = 1L;

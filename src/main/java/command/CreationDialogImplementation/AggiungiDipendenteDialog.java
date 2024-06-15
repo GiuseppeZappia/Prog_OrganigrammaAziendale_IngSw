@@ -5,7 +5,6 @@ import composite.utilities.Dipendente;
 import composite.utilities.Ruolo;
 import exceptions.DipendenteGiaEsistenteException;
 import gui.PannelloDisegno;
-
 import javax.swing.*;
 import java.awt.*;
 import java.text.NumberFormat;
@@ -25,7 +24,8 @@ public class AggiungiDipendenteDialog implements CreateDialog {
         //DEVO PASSARE AL JDIALOG L'OWNER, LO RICAVO DAL MIO PANNELLO DI DISEGNO
         //FACCIO CAST SENZA INSTANCEOF PERCHE SONO SICURO CHE IL JPANEL IN QUESTIONE SIA QUELLO CHE HA COME PADRE IL FRAME
         Frame framePrincipale = (Frame) SwingUtilities.getWindowAncestor(pd);
-        JDialog finestra = new JDialog(framePrincipale, "Inserimento dipendente", true);//mettendo true so che nel frattempo utente non puo usare resto dell'app ma in caso deve chiudere dialogo
+        JDialog finestra = new JDialog(framePrincipale, "Inserimento dipendente", true);
+        //mettendo true so che nel frattempo utente non puo usare resto dell'app ma in caso deve chiudere dialogo
         finestra.setLocationRelativeTo(null);//al centro
         JPanel pannello = new JPanel();
         GroupLayout layout = new GroupLayout(pannello);
@@ -60,7 +60,6 @@ public class AggiungiDipendenteDialog implements CreateDialog {
         scegliTraPresenti.addActionListener(e -> {
             JDialog finestraRuoliPrese = apriFinestraDipendentiPresenti();
             finestraRuoliPrese.setVisible(true);
-
             finestra.dispose();
         });
 
@@ -79,7 +78,7 @@ public class AggiungiDipendenteDialog implements CreateDialog {
             if (nome.isBlank() || cognome.isBlank() || citta.isBlank() || indirizzo.isBlank() || eta.intValue() < 0) {
                 JOptionPane.showMessageDialog(pd, "Parametri mancanti o non validi", "Errore nell'inserimento", JOptionPane.ERROR_MESSAGE);
                 return;
-            }//POTREI UNIRE I DUE IF, LO FACCIO PER MAGGIORRE CHIAREZZA
+            }//POTREI UNIRE I DUE IF, LO FACCIO PER MAGGIORRE LEGGIBILITA'
             Dipendente dipendente = new Dipendente(nome, cognome, citta, indirizzo, eta.intValue());
             try {
                 dipendente.aggiungiDipendenteAdUnita(this.elem, ruolo);//LO AGGIUNGO ALL'UNITA E POI CON CHIAMATA SOTTO:
@@ -93,7 +92,6 @@ public class AggiungiDipendenteDialog implements CreateDialog {
         cancel.addActionListener(e -> {
             finestra.dispose();
         });
-
 
         layout.setHorizontalGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -240,13 +238,13 @@ public class AggiungiDipendenteDialog implements CreateDialog {
                 }
             }
         }
-        return null;//MAI RESTITUISCE PERCHE SCELGIAMO NOI DA LISTBOX
+        return null;//MAI RESTITUISCE PERCHE SCEGLIAMO NOI DA LISTBOX
     }
 
     private String[] listaDipendentiPresenti() {
         LinkedList<String> lista = new LinkedList<>();
         for (OrganigrammaElement elem : pd.getUnitaDisegnate()) {
-            if (!elem.equals(this.elem) ) {//cosi non do possibilita di inserire in un ruolo un dipendente della stessa unita
+            if (!elem.equals(this.elem) ) {//cosi non do possibilità di inserire in un ruolo un dipendente della stessa unita
                 for (Dipendente d : elem.getDipendenti()) {
                     String toAdd=d.getNome() + "-" + d.getCognome() + "-" + d.getEta();
                     if(!lista.contains(toAdd)) {

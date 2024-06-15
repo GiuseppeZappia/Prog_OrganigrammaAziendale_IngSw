@@ -16,7 +16,7 @@ public class AggiungiFiglioUnitaCommand implements Command {
 
     @Override
     public boolean doIt() {
-        try {//perche nella scelta della listbox da spazio vuoto che non fa fare selezione ma se scelto da null
+        try {
             padre.addChild(elem);
         } catch (FiglioUnitaNonValidoException | SubjectSenzaListenerInAscoltoException ex) {
             throw new RuntimeException(ex);

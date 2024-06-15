@@ -3,7 +3,7 @@ package gui;
 import java.io.File;
 
 
-//dalla documetazione vedo che va creata questa classe di utilita con questo
+//dalla documentazione vedo che va creata questa classe di utilita con questo
 //metodo per prendere cosi estensione facendo semplice parsing dei nomi
 public class Utils {
 

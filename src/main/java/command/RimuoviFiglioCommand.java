@@ -7,13 +7,11 @@ import exceptions.SubjectSenzaListenerInAscoltoException;
 import composite.OrganigrammaElement;
 import gui.PannelloDisegno;
 import memento.Memento;
-//import memento.PannelloDisegnoMemento;
 
 public class RimuoviFiglioCommand implements Command{
 
     private OrganigrammaElement elementoDaElimin,padre;
     private PannelloDisegno pd;
-//    private PannelloDisegnoMemento memento;
     private Memento memento;
 
     public RimuoviFiglioCommand(OrganigrammaElement padre,OrganigrammaElement ele, PannelloDisegno pd){
