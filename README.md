@@ -28,7 +28,7 @@ Il codice seguente mette a disposizione dell'utente un'applicazione per la creaz
 
 ## Esecuzione
 
-1. Trova la classe `Main` nel tuo progetto (di solito si trova in `src/main/java`).
+1. Trova la classe `Main` nel tuo progetto.
 2. Fai clic con il tasto destro del mouse sulla classe `Main` e seleziona `Run 'Main'`.
 
 ## Autore
