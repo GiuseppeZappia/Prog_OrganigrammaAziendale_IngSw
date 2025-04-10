@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # organigrammaAziendale_ingSw
 =======
 # Prog_OrganigrammaAziendale_IngSw
